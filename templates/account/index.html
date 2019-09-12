@@ -1,0 +1,246 @@
+{% extends 'layout.html' %}
+{% load static i18n humanize %}
+{% block title %}{% trans 'Account Details' %}{% endblock title %}
+
+{% block extrastyles %}
+{% endblock %}
+
+{% block content %}
+<div class="app-content content">
+    <div class="content-wrapper">
+        <div class="content-header row">
+            <div class="content-header-left col-md-8 col-12 mb-2 breadcrumb-new">
+                <h3 class="content-header-title mb-0 d-inline-block">{% trans 'Account Details' %}</h3>
+                <div class="row breadcrumbs-top d-inline-block">
+                    <div class="breadcrumb-wrapper col-12">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'pesaify-dashboard' %}">{% trans 'Dashboard' %}</a>
+                            </li>
+                            <li class="breadcrumb-item active">{% trans 'Account Details' %}
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="content-body">
+            {% if not request.user.dismiss_message and request.user.message %}
+            <div class="alert alert-dismissable alert-success">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true" id="dismiss">&times;</button>
+                {{ request.user.message|safe }}
+            </div>
+            {% endif %}
+
+            <div class="row">
+                <div class="col-12 col-md-3">
+                    <div class="">
+                        <div class="card-content collapse show">
+                            <div class="card-body">
+                                <p class="text-bold-700 text-uppercase mb-0 info">{% trans 'Basic' %}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-9">
+                    <p class="text-right"><a href="{% url 'pesaify-account-details-step-one' %}">Edit</a></p>
+                    <div class="">
+                        <div class="card-content collapse show">
+                            <div class="card-body row">
+                                <div class="col-12 col-md-4"><p>Name:</p> </div>
+                                <div class="col-12 col-md-8"><p class="text-bold-700 text-capitalize mb-0">{{ request.user.get_full_name }}</p></div>
+                                <div class="col-12 col-md-4"><p>Email:</p> </div>
+                                <div class="col-12 col-md-4"><p class="text-bold-700 mb-0 {% if request.user.is_email_verified %}success{% else %}danger{% endif %}">{{ request.user.email }}</p></div>
+                                <div class="col-12 col-md-4"><a href="{% url 'pesaify-account-update-email-address' %}">Change</a></div>
+                                <div class="col-12 col-md-4"><p>Phone:</p> </div>
+                                <div class="col-12 col-md-8"><p class="text-bold-700 mb-0">{{ request.user.phone_number }}</p></div>
+                                <div class="col-12 col-md-4"><p>Status:</p> </div>
+                                {% if request.user.is_verified == '3' %}
+                                <div class="col-12 col-md-8"><a href="{% url 'pesaify-account-verification-step-one' %}" class="mb-0 btn-sm btn btn-outline-success">Verified</a></div>
+                                {% elif request.user.is_verified == '1' %}
+                                <div class="col-12 col-md-8"><a href="#" class="mb-0 btn-sm btn btn-outline-warning">Pending</a></div>
+                                {% elif request.user.is_verified == '2' %}
+                                <div class="col-12 col-md-8"><a href="#" class="mb-0 btn-sm btn btn-outline-danger">Unverified</a></div>
+                                {% else %}
+                                <div class="col-12 col-md-8"><a href="#" class="mb-0 btn-sm btn btn-outline-info">Under Review</a></div>
+                                {% endif %}
+
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                </div>
+                <div class="col-12 col-md-3">
+                    <div class="">
+                        <div class="card-content collapse show">
+                            <div class="card-body">
+                                <p class="text-bold-700 text-uppercase mb-0 info">{% trans 'Security' %}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-9">
+                    <p class="text-right"><a href="{% url 'two_factor:profile' %}">Edit</a></p>
+                    <div class="">
+                        <div class="card-content collapse show">
+                            <div class="card-body row">
+                                <div class="col-12 col-md-4"><p>Two Factor Authentication:</p> </div>
+                                <div class="col-12 col-md-8"><p class="text-bold-700 text-capitalize mb-0 {% if default_device %}success{% else %}danger{% endif %}">{% if default_device %} Enabled(Recommended) {% else %}Disabled{% endif %}</p></div>
+                                <div class="col-12 col-md-4"><p>Change Password:</p> </div>
+                                <div class="col-12 col-md-8"><p class="text-bold-700 text-capitalize mb-0"><a href="{% url 'pesaify-change-password' %}">{% trans 'Change' %}</a></p></div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                </div>
+                <div class="col-12 col-md-3">
+                    <div class="">
+                        <div class="card-content collapse show">
+                            <div class="card-body">
+                                <p class="text-bold-700 text-uppercase mb-0 info">{% trans 'Merchant Profile' %}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-9">
+                    <p class="text-right"><a href="{% url 'pesaify-account-verification-step-one' %}?edit=true">Edit</a></p>
+                    <div class="">
+                        <div class="card-content collapse show">
+                            <div class="card-body row">
+                                <div class="col-12 col-md-4"><p>Name:</p> </div>
+                                <div class="col-12 col-md-8"><p class="text-bold-700 text-uppercase mb-0">{{ request.user.business.legal_name }}</p></div>
+                                <div class="col-12 col-md-4"><p>Industry:</p> </div>
+                                <div class="col-12 col-md-8"><p class="text-bold-700 text-uppercase mb-0">{{ request.user.business.industry_name }}</p></div>
+                                <div class="col-12 col-md-4"><p>Website:</p> </div>
+                                <div class="col-12 col-md-8"><p class="text-bold-700 mb-0">{{ request.user.business.website }}</p></div>
+                                <div class="col-12 col-md-4"><p>Support Phone:</p> </div>
+                                <div class="col-12 col-md-8"><p class="text-bold-700 mb-0">{{ request.user.business.phone_number }}</p></div>
+                                <div class="col-12 col-md-4"><p>Basic Verification:</p> </div>
+                                {% if request.user.business.tier0 == '3' %}
+                                <div class="col-12 col-md-8"><a href="{% url 'pesaify-account-verification-step-one' %}" class="mb-0 btn-sm btn btn-outline-success">Verified</a></div>
+                                {% elif request.user.business.tier0 == '1' %}
+                                <div class="col-12 col-md-8"><a href="{% url 'pesaify-account-verification-step-one' %}" class="mb-0 btn-sm btn btn-outline-warning">Pending</a></div>
+                                {% elif request.user.business.tier0 == '2' %}
+                                <div class="col-12 col-md-8"><a href="{% url 'pesaify-account-verification-step-one' %}" class="mb-0 btn-sm btn btn-outline-danger">Unverified</a></div>
+                                {% else %}
+                                <div class="col-12 col-md-8"><a href="{% url 'pesaify-account-verification-step-one' %}" class="mb-0 btn-sm btn btn-outline-info">Under Review</a></div>
+                                {% endif %}
+                                <div class="col-12 col-md-4"><p>Tier 1:</p> </div>
+                                {% if request.user.business.tier1 == '3' %}
+                                <div class="col-12 col-md-8"><a href="{% url 'pesaify-account-verification-step-one' %}" class="mb-0 btn-sm btn btn-outline-success">Verified</a></div>
+                                {% elif request.user.business.tier1 == '1' %}
+                                <div class="col-12 col-md-8"><a href="{% url 'pesaify-account-verification-step-one' %}" class="mb-0 btn-sm btn btn-outline-warning">Pending</a></div>
+                                {% elif request.user.business.tier1 == '2' %}
+                                <div class="col-12 col-md-8"><a href="{% url 'pesaify-account-verification-step-one' %}" class="mb-0 btn-sm btn btn-outline-danger">Unverified</a></div>
+                                {% else %}
+                                <div class="col-12 col-md-8"><a href="{% url 'pesaify-account-verification-step-one' %}" class="mb-0 btn-sm btn btn-outline-info">Under Review</a></div>
+                                {% endif %}
+                                <div class="col-12 col-md-4"><p>Tier 2:</p> </div>
+                                {% if request.user.business.tier2 == '3' %}
+                                <div class="col-12 col-md-8"><a href="{% url 'pesaify-account-verification-step-one' %}" class="mb-0 btn-sm btn btn-outline-success">Verified</a></div>
+                                {% elif request.user.business.tier2 == '1' %}
+                                <div class="col-12 col-md-8"><a href="{% url 'pesaify-account-verification-step-one' %}" class="mb-0 btn-sm btn btn-outline-warning">Pending</a></div>
+                                {% elif request.user.business.tier2 == '2' %}
+                                <div class="col-12 col-md-8"><a href="{% url 'pesaify-account-verification-step-one' %}" class="mb-0 btn-sm btn btn-outline-danger">Unverified</a></div>
+                                {% else %}
+                                <div class="col-12 col-md-8"><a href="{% url 'pesaify-account-verification-step-one' %}" class="mb-0 btn-sm btn btn-outline-info">Under Review</a></div>
+                                {% endif %}
+
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                </div>
+                <div class="col-12 col-md-3">
+                    <div class="">
+                        <div class="card-content collapse show">
+                            <div class="card-body">
+                                <p class="text-bold-700 text-uppercase mb-0 info">{% trans 'Approved Volume' %}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-9">
+                    <div class="">
+                        <div class="card-content collapse show">
+                            <div class="card-body row">
+                                <div class="col-12 col-md-4"><p>Tier:</p> </div>
+                                <div class="col-12 col-md-8"><p class="text-bold-700 text-uppercase mb-0"><i class="fa fa-checked"></i>{% if request.user.business.tier2 == "3" %}2{% elif request.user.business.tier1 == "3" %}1{% elif request.user.business.tier0 == "3"%}0{% else %}Application Under Review{% endif %}</p></div>
+                                <div class="col-12 col-md-4"><p>Daily:</p> </div>
+                                <div class="col-12 col-md-8"><p class="text-bold-700 text-uppercase mb-0">{{ request.user.business.daily_maximum }}</p></div>
+                                <div class="col-12 col-md-4"><p>Annual:</p> </div>
+                                <div class="col-12 col-md-8"><p class="text-bold-700 mb-0">{{ request.user.business.annual_maximum }}</p></div>
+                                {% if not request.user.business.tier2 == "3" %}
+                                <div class="btn-group"><a class="btn btn-outline-info" href="{% url 'pesaify-account-verification' %}">{% trans 'Increase Processing Volume' %}</a></div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                </div>
+                <div class="col-12 col-md-3">
+                    <div class="">
+                        <div class="card-content collapse show">
+                            <div class="card-body">
+                                <p class="text-bold-700 text-uppercase mb-0 info">{% trans 'Accepted Currencies' %}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-9">
+                    <p class="text-right"><a href="{% url 'pesaify-account-settlement' %}">Edit</a></p>
+                    <div class="">
+                        <div class="card-content collapse show">
+                            <div class="card-body row">
+                                {% for settlement in request.user.settlements %}
+                                {% if settlement.is_verified == '3' %}
+                                <div class="col-12 col-md-4"><p>{% if settlement.currency == 'BTC' %}Bitcion{% elif settlement.currency == 'BCH' %}BitCash{% elif settlement.currency == 'MM' %}Mobile Money{% else %}Bank Account {{ settlement.currency }}{% endif %}</p> </div>
+                                <div class="col-12 col-md-8"><p class="text-bold-700 text-uppercase mb-0 success">Verified</p></div>
+                                {% endif %}
+                                {% endfor %}
+                                <div class="btn-group center"><a class="btn btn-outline-info" href="{% url 'pesaify-account-settlement-add' %}">{% trans 'Add Settlement Currency' %}</a></div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                </div>
+                <div class="col-12 col-md-3">
+                    <div class="">
+                        <div class="card-content collapse show">
+                            <div class="card-body">
+                                <p class="text-bold-700 text-uppercase mb-0 info">{% trans 'Order Settings' %}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-9">
+                    <p class="text-right"><a href="{% url 'pesaify-account-settings' %}">Edit</a></p>
+                    <div class="">
+                        <div class="card-content collapse show">
+                            <div class="card-body row">
+                                {% comment %} <div class="col-12 col-md-4"><p>Speed:</p> </div>
+                                <div class="col-12 col-md-8"><p class="text-bold-700 text-uppercase mb-0">{% if request.user.business.speed == '1' %}High{% elif request.user.business.speed == '2' %}Medium{% else %}Low{% endif %}</p></div> {% endcomment %}
+                                <div class="col-12 col-md-4"><p> Immediately send notifications for payments without a sufficient fee :</p> </div>
+                                <div class="col-12 col-md-8"><p class="text-bold-700 mb-0 {% if request.user.business.notify %}success{% endif %}">{% if request.user.business.notify %} Enabled {% else %}Disabled(Recommended){% endif %}</p></div>
+                                <div class="col-12 col-md-4"><p>Send notifications to:</p> </div>
+                                <div class="col-12 col-md-8"><p class="text-bold-700 mb-0">{{ request.user.email }}</p></div>
+                                <div class="col-12 col-md-4"><p>Refund Exchange Rate Policy:</p> </div>
+                                <div class="col-12 col-md-8"><p class="text-bold-700 mb-0"> {% if request.user.business.notify %} Fixed Rate Refunds (Recommended) {% else %}Current Rate Refunds{% endif %} </p></div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block scripts %}
+    {{ block.super }}
+{% endblock %}
+
+{% block onbodyload %}
+    {{ block.super }}
+{% endblock %}

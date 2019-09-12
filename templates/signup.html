@@ -1,0 +1,181 @@
+{% extends 'layout.html' %}
+{% load static i18n %}
+{% block title %}{% trans 'New User' %}{% endblock title %}
+
+{% block extrastyles %}
+{% endblock %}
+
+{% block layout %}
+
+<nav class="header-navbar navbar-expand-md navbar navbar-with-menu navbar-without-dd-arrow fixed-top navbar-light navbar-bg-color">
+    <div class="navbar-wrapper">
+        <div class="navbar-header d-md-none">
+            <ul class="nav navbar-nav flex-row">
+                <li class="nav-item mobile-menu d-md-none mr-auto"><a class="nav-link nav-menu-main menu-toggle hidden-xs" href="#"><i class="fa fa-bars font-large-1"></i></a></li>
+                <li class="nav-item d-md-none"><a class="navbar-brand" href="https://pesaify.com/"><img height="60px" class="d-none d-md-block" alt="logo" src="{% static 'pesaify/images/logo.png' %}"><img height="60px" class="d-sm-block d-md-none" alt="logo sm" src="{% static 'pesaify/images/logo-sm.png' %}"></a></li>
+                <li class="nav-item d-md-none"><a class="nav-link open-navbar-container" data-toggle="collapse" data-target="#navbar-mobile"><i class="la la-ellipsis-v"></i></a></li>
+            </ul>
+        </div>
+        <div class="navbar-container">
+            <div class="collapse navbar-collapse" id="navbar-mobile">
+                <ul class="nav navbar-nav mr-auto float-left">
+                    <li class="nav-item d-none d-md-block"><a class="navbar-brand" href="https://pesaify.com/"><img height="60px" class="d-none d-md-block" alt="logo" src="{% static 'pesaify/images/logo-sm.png' %}"><img height="60px" class="d-sm-block d-md-none" alt="logo sm" src="{% static 'pesaify/images/logo-sm.png' %}"></a></li>
+                </ul>
+                <ul class="nav navbar-nav float-right">
+                    <li class="dropdown dropdown-notification nav-item"><a class="nav-link nav-link-label" href="https://pesaify.com/help/">Help</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="app-content content">
+    <div class="content-wrapper">
+        <div class="content-body">
+            {% if not request.user.dismiss_message and request.user.message %}
+            <div class="alert alert-dismissable alert-success">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true" id="dismiss">&times;</button>
+                {{ request.user.message|safe }}
+            </div>
+            {% endif %}
+            <div class="row">
+                <div class="col-12 col-md-6 offset-md-2">
+                    <section class="card">
+                        <div class="card-content">
+                            <div class="card-body">
+                                <div class="col-12">
+                                    <div class="row">
+                                        <div class="col-md-12 col-12">
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <p class="text-bold-700 text-uppercase mb-0">{% trans 'Create a Business Account ' %}</p>
+                                                </div>
+                                            </div>
+                                            <small class="detail-error error"></small>
+                                            <hr/>
+                                            <form class="form-horizontal form-user-profile row mt-2" id="register" action="#" method="POST">
+                                                {% csrf_token %}
+                                                <div class="col-12">
+                                                    <fieldset class="form-label-group">
+                                                        <input type="text" class="form-control" id="company-name" name="company_name" required="" autofocus="">
+                                                        <label for="company-name">{% trans 'Organisation Name' %} *</label>
+                                                        <small class="company-name-error error"></small>
+                                                    </fieldset>
+                                                </div>
+                                                <div class="col-12">
+                                                    <fieldset class="form-label-group">
+                                                        <input type="text" class="form-control" id="first-name" name="first_name" required="" autofocus="">
+                                                        <label for="first-name">{% trans 'First name' %} *</label>
+                                                        <small class="first-name-error error"></small>
+                                                    </fieldset>
+                                                </div>
+                                                <div class="col-12 col-md-6">
+                                                    <fieldset class="form-label-group">
+                                                        <input type="text" class="form-control" id="middle-name" name="middle_name" autofocus="">
+                                                        <label for="middle-name">{% trans 'Middle name' %}</label>
+                                                        <small class="middle-name-error error"></small>
+                                                    </fieldset>
+                                                </div>
+                                                <div class="col-12 col-md-6">
+                                                    <fieldset class="form-label-group">
+                                                        <input type="text" class="form-control" id="last-name" name="last_name" required="" autofocus="">
+                                                        <label for="last-name">{% trans 'Last name' %} *</label>
+                                                        <small class="last-name-error error"></small>
+                                                    </fieldset>
+                                                </div>
+                                                <div class="col-12 col-md-12">
+                                                    <fieldset class="form-label-group">
+                                                        <input type="text" class="form-control" id="email-address" name="email" required="" autofocus="">
+                                                        <label for="email-address">{% trans 'Email' %} *</label>
+                                                        <small class="email-error error"></small>
+                                                    </fieldset>
+                                                </div>
+                                                <div class="col-12 col-md-6">
+                                                    <fieldset class="form-label-group">
+                                                        <input type="password" class="form-control" id="password" name="password" required="" autofocus="">
+                                                        <label for="password">{% trans 'Password' %} *</label>
+                                                        <small class="password-error error"></small>
+                                                    </fieldset>
+                                                </div>
+                                                <div class="col-12 col-md-6">
+                                                    <fieldset class="form-label-group">
+                                                        <input type="password" class="form-control" id="confirm-password" name="confirm_password" required="" autofocus="">
+                                                        <label for="confirm-password">{% trans 'Confirm password' %} *</label>
+                                                        <small class="confirm-password-error error"></small>
+                                                    </fieldset>
+                                                </div>
+                                                <div class="col-12 text-center text-sm-left">
+                                                    <fieldset>
+                                                        <input type="checkbox" id="accepted-terms" name="accepted_terms" class="switchery" required checked data-size="sm" >
+                                                        <label for="accepted-terms">{% trans 'I agree to Pesaify' %} <a href="https://www.pesaify.com/privacy-policy/" target="_blank">{% trans 'Privacy Policy' %}</a> {% trans 'and' %} <a href="https://www.pesaify.com/terms-of-use/" target="_blank">{% trans 'Terms of Use' %}</a></label>
+                                                        <small class="accepted-terms-error error"></small>
+                                                    </fieldset>
+                                                </div>
+
+                                                <div class="col-12">
+                                                    <div class="g-recaptcha" data-sitekey="{{ sitekey }}"></div>
+                                                </div>
+
+                                                <div class="col-12 text-right">
+                                                    <button type="submit" class="btn btn-info">{% trans 'Create Account' %}</button>
+                                                </div>
+
+                                                <div class="col-12">
+                                                    <p class="text-left">{% trans "Yes I have an account.!" %}<a href="{% url 'two_factor:login' %}" class="card-link"> {% trans 'Login' %}</a></p>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    {% include "partials/footer.html" %}
+
+{% endblock %}
+
+
+{% block scripts %}
+    {{ block.super }}
+    <script src='https://www.google.com/recaptcha/api.js'></script>
+{% endblock %}
+
+{% block onbodyload %}
+    {{ block.super }}
+    $('#register').validate({
+        url: "{% url 'users-list' %}",
+        type: "POST",
+        event: 'submit',
+        beforeSend: function(jqXHR, setting) {
+            $("#register button").html("<img src='{% static 'pesaify/images/loading.gif' %}' alt='' width='25' height='25'>");
+            $("#register button").attr("disabled",true);
+            $(".error").html("");
+        },
+        success: function(data, textStatus, jqXHR) {
+            window.location = '{% url "pesaify-dashboard" %}';
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            grecaptcha.reset();
+            $("#register button").html("{% trans 'Create Account' %}");
+            $("#register button").removeAttr("disabled");
+            $.each(jqXHR.responseJSON, function(index,value){
+                if(index == "detail") {
+                    $(".detail-error").html(value)
+                } else {
+                    result = ''
+                    $(value).each(function(index,value){result= result + "<p>"+value+"</p>"});
+                    $("." + index.replace(/_/g, '-') + "-error").html(result)
+                }
+            })
+        },
+    });
+
+
+{% endblock %}

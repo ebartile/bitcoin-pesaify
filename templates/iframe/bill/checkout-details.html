@@ -1,0 +1,288 @@
+{% extends 'iframe/layout.html' %}
+{% load static i18n %}
+{% block title %}{% trans 'Checkout Details' %}{% endblock title %}
+
+{% block extrastyles %}
+{% endblock %}
+
+{% block content %}
+
+<div class="app-content content">
+  <div class="content-wrapper">
+    <form id="checkout-details" action="." method="POST">
+      {% csrf_token %}
+      <div class="content-body row">
+        {% if not request.user.dismiss_message and request.user.message %}
+        <div class="alert alert-dismissable alert-success">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true" id="dismiss">&times;</button>
+            {{ request.user.message|safe }}
+        </div>
+        {% endif %}
+
+        <div class="col-12 col-md-6 offset-md-3 text-center" id="order-number-card">
+            <div class="">
+                <div class="card-content collapse show">
+                    <div class="text-center card-body">
+                        <div class="row clearfix mb-2">
+                            <a href="#" class="btn btn-outline-success btn-topright hidden">×</a>
+                            <div class="col-12">
+                                <img class="verify-image" src="{% static 'pesaify/images/logo.png' %}" height="75px" alt="">
+                                <h4 class="section-block-header-topic">Create an Invoice</h4>
+                            </div>
+                        </div>
+                        <div class="input-group input-group-lg">
+                          <input type="text" class="form-control" placeholder="Order Number" name="order" autofocus="">
+                          <span class="input-group-btn">
+                            <a href="#" class="btn btn-outline-primary btn-lg" id="checkout-amount">→</a>
+                          </span>
+                        </div>
+                    </div>
+                    <a href="#" class="mt-4" id="checkout-as-employee">Checkout with as Employee →</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-6 offset-md-3 text-center hidden" id="employee-card">
+            <div class="">
+                <div class="card-content collapse show">
+                    <div class="text-center card-body">
+                        <div class="row clearfix mb-2">
+                            <div class="col-12">
+                                <a href="#" class="btn btn-outline-success pull-right employee-card-dismiss">×</a>
+                                <img class="verify-image" src="{% static 'pesaify/images/logo.png' %}" height="75px" alt="">
+                                <h4 class="section-block-header-topic">Create an Invoice</h4>
+                            </div>
+                        </div>
+                        <div class="input-group input-group-lg">
+                          <input type="text" class="form-control" name="employee" placeholder="Employee Name" id="employee">
+                        </div>
+                        <a href="#" class="btn btn-outline-primary btn-block mt-2 employee-card-dismiss" id="employee-submit" disabled>Confirm name →</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-12 col-md-6 offset-md-3 text-center hidden" id="amount-card">
+            <div class="">
+                <div class="card-content collapse show">
+                    <div class="card-body">
+                        <div class="row clearfix mb-2">
+                            <a href="#" class="btn btn-outline-success amount-card-dismiss pull-left m-1">←</a>
+                            <div class="col-12">
+                                <h1 class="amount">{{ checkout.currency }} 0.00</h1>
+                                <input type="hidden" name="amount" id="amount" value="0">
+                            </div>
+                        </div>
+                        <div class="input-group input-group-lg center-block">
+                          <a href="#" class="btn btn-outline-info btn-lg m-1 digit" data-digit="1">1</a>
+                          <a href="#" class="btn btn-outline-info btn-lg m-1 digit" data-digit="2">2</a>
+                          <a href="#" class="btn btn-outline-info btn-lg m-1 digit" data-digit="3">3</a>
+                        </div>
+                        <div class="input-group input-group-lg center-block">
+                          <a href="#" class="btn btn-outline-info btn-lg m-1 digit" data-digit="4">4</a>
+                          <a href="#" class="btn btn-outline-info btn-lg m-1 digit" data-digit="5">5</a>
+                          <a href="#" class="btn btn-outline-info btn-lg m-1 digit" data-digit="6">6</a>
+                        </div>
+                        <div class="input-group input-group-lg center-block">
+                          <a href="#" class="btn btn-outline-info btn-lg m-1 digit" data-digit="7">7</a>
+                          <a href="#" class="btn btn-outline-info btn-lg m-1 digit" data-digit="8">8</a>
+                          <a href="#" class="btn btn-outline-info btn-lg m-1 digit" data-digit="9">9</a>
+                        </div>
+                        <div class="input-group input-group-lg center-block">
+                          <a href="#" class="btn btn-outline-info btn-lg m-1 digit" data-digit="C">C</a>
+                          <a href="#" class="btn btn-outline-info btn-lg m-1 digit" data-digit="0">0</a>
+                          <a href="#" class="btn btn-outline-info btn-lg m-1 digit" data-digit="00">00</a>
+                        </div>
+                        <a href="#" class="btn btn-primary" id="checkout" disabled="disabled">Checkout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-6 offset-md-3 text-center hidden" id="tip-card">
+            <div class="">
+                <div class="card-content collapse show">
+                    <div class="card-body">
+                        <div class="row clearfix mb-2">
+                            <a href="#" class="btn btn-outline-success tip-card-dismiss pull-left m-1">←</a>
+                            <div class="col-12">
+                                <h1 class="tip-amount amount">{{ checkout.currency }} 0.00</h1>
+                                <p class="total success">{{ checkout.currency }} 0.00 + 0%</p>
+                                <p>Would you like to add a tip?</p>
+                                <input type="hidden" name="tip" id="tip" value="0">
+                            </div>
+                        </div>
+                        <div class="input-group input-group-lg center-block">
+                          <a href="#" class="btn btn-outline-info btn-lg m-1 tips" data-tip="15">15%</a>
+                          <a href="#" class="btn btn-outline-info btn-lg m-1 tips" data-tip="20">20%</a>
+                          <a href="#" class="btn btn-outline-info btn-lg m-1 tips" data-tip="25">25%</a>
+                        </div>
+                        <div class="input-group input-group-lg center-block">
+                          <a href="#" class="btn btn-outline-info btn-lg custom-tip m-1 tips" data-tip="C">Custom</a>
+                          <a href="#" class="btn btn-info btn-lg m-1 tips" data-tip="0">No Tip</a>
+                        </div>
+                        <div class="input-group input-group-lg center-block hidden" id="custom-buttons">
+                          <a href="#" class="btn btn-default btn-lg m-1" id="decrease">-</a>
+                          <a href="#" class="btn btn-info btn-lg m-1" id="custom-value">20%</a>
+                          <a href="#" class="btn btn-default btn-lg m-1" id="increase">+</a>
+                        </div>
+                        <button type="submit"  class="btn btn-primary btn-block hidden" id="pay" disabled="disabled">Pay Now</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+{% endblock %}
+
+
+{% block scripts %}
+    {{ block.super }}
+{% endblock %}
+
+{% block onbodyload %}
+    {{ block.super }}
+    $("#checkout-amount").on("click", function(e){
+      e.preventDefault();
+      $("#order-number-card").addClass("hidden");
+      $("#amount-card").removeClass("hidden");
+    });
+
+    $("#checkout-as-employee").on("click", function(e){
+      e.preventDefault();
+      $("#order-number-card").addClass("hidden");
+      $("#employee-card").removeClass("hidden");
+    });
+
+    $(".employee-card-dismiss").on("click", function(){
+      $("#order-number-card").removeClass("hidden");
+      $("#employee-card").addClass("hidden");
+    });
+
+    $(".amount-card-dismiss").on("click", function(){
+      $("#order-number-card").removeClass("hidden");
+      $("#amount-card").addClass("hidden");
+    });
+
+
+    $("#employee").on("input", function() {
+      if($(this).val().length == 0) {
+        $("#employee-submit").attr("disabled", "");
+      } else {
+        $("#employee-submit").removeAttr("disabled");
+      }
+    });
+
+    var price = 0;
+
+    $(".digit").on("click", function() {
+      if($(this).attr("data-digit").toString() == '00') {
+        price *= 100;
+      } else {
+        if($(this).attr("data-digit").toString() == 'C') {
+          price = 0
+        } else {
+          if(price != 0) price *= 10;
+
+          if(isBitcoin()) {
+            price += $(this).attr("data-digit") * .000001;
+          } else {
+            price += $(this).attr("data-digit") * .01;
+          }
+        }
+      }
+
+      if(isBitcoin()){
+        $(".amount").html("{{ checkout.currency }} "+price.toFixed(6));
+        $(".total").html("{{ checkout.currency }} "+price.toFixed(6) + " + 0%");
+        $("#amount").attr("value", price.toFixed(6));
+      } else {
+        $(".amount").html("{{ checkout.currency }} "+price.toFixed(2));
+        $(".total").html("{{ checkout.currency }} "+price.toFixed(2) + " + 0%");
+        $("#amount").attr("value", price.toFixed(2));
+      }
+      if(price > 0) {
+        $("#checkout").removeAttr("disabled").on("click", function(){
+          $("#tip-card").removeClass("hidden");
+          $("#amount-card").addClass("hidden");
+        });
+      } else {
+        $("#checkout").attr("disabled", "").on("click", function(){});
+      }
+    });
+
+    var isBitcoin = function(){
+      return false;
+    }
+
+    $(".tip-card-dismiss").on("click", function(){
+      $("#amount-card").removeClass("hidden");
+      $("#tip-card").addClass("hidden");
+    });
+
+    var tip = 0;
+
+    $('.tips').on('click', function(e){
+        $('.tips.btn-info').removeClass('btn-info').addClass('btn-outline-info');
+        $(this).removeClass('btn-outline-info').addClass('btn-info');
+
+        if($(this).attr("data-tip").toString() == 'C') {
+          $(this).addClass("hidden");
+          $("#custom-buttons").removeClass("hidden");
+          tip = 20;
+          $("#custom-value").html(tip + "%");
+        } else {
+          $("#custom-buttons").addClass("hidden");
+          $(".custom-tip").removeClass("hidden");
+          tip = $(this).attr("data-tip");
+        }
+
+        if(isBitcoin()){
+          $(".tip-amount.amount").html("{{ checkout.currency }} " + (price + (price * tip * 0.01)).toFixed(6));
+          $(".total").html("{{ checkout.currency }} " + price.toFixed(6) + " + " + tip + "%");
+        } else {
+          $(".tip-amount.amount").html("{{ checkout.currency }} " + (price + (price * tip * 0.01)).toFixed(2));
+          $(".total").html("{{ checkout.currency }} " + price.toFixed(2) + " + " + tip + "%");
+        }
+
+        $("#pay").removeClass("hidden").removeAttr("disabled").on("click", function(){
+
+        });
+        $("#tip").attr("value", tip);
+    });
+
+    $("#decrease").on("click", function(){
+      if(tip > 0) {
+        tip = tip - 1;
+      }
+      $("#custom-value").html(tip + "%");
+      if(isBitcoin()){
+        $(".tip-amount.amount").html("{{ checkout.currency }} " + (price + (price * tip * 0.01)).toFixed(6));
+        $(".total").html("{{ checkout.currency }} " + price.toFixed(6) + " + " + tip + "%");
+      } else {
+        $(".tip-amount.amount").html("{{ checkout.currency }} " + (price + (price * tip * 0.01)).toFixed(2));
+        $(".total").html("{{ checkout.currency }} " + price.toFixed(2) + " + " + tip + "%");
+      }
+      $("#tip").attr("value", tip);
+    });
+    $("#increase").on("click", function(){
+      if(tip < 100) {
+        tip = tip + 1;
+      }
+      $("#custom-value").html(tip + "%");
+      if(isBitcoin()){
+        $(".tip-amount.amount").html("{{ checkout.currency }} " + (price + (price * tip * 0.01)).toFixed(6));
+        $(".total").html("{{ checkout.currency }} " + price.toFixed(6) + " + " + tip + "%");
+      } else {
+        $(".tip-amount.amount").html("{{ checkout.currency }} " + (price + (price * tip * 0.01)).toFixed(2));
+        $(".total").html("{{ checkout.currency }} " + price.toFixed(2) + " + " + tip + "%");
+      }
+      $("#tip").attr("value", tip);
+    });
+
+{% endblock %}

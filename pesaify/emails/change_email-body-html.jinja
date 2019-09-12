@@ -1,0 +1,12 @@
+{% extends "emails/base-body-html.jinja" %}
+
+{% block body %}
+    {% trans full_name=user.get_full_name(), url=resolve_url("pesaify-account-verify-email-address", user.email_token) %}
+    <p>Hello {{ full_name }}</p>
+    <p>Thank you for signing up with Pesaify! Please confirm your email address by clicking the link below.</p>
+    <a class="button" href="{{ url }}" title="Confirm email">Confirm email</a>
+    <p>You can ignore this message if you did not request.</p>
+    <p><small>We look forward to serving you</small></p>
+    <p><small>Pesaify Team</small></p>
+    {% endtrans %}
+{% endblock %}

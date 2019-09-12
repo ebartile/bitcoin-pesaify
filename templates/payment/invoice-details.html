@@ -1,0 +1,184 @@
+{% extends 'layout.html' %}
+{% load static i18n humanize functions %}
+{% block title %}{% trans 'Payment Details' %}{% endblock title %}
+
+{% block content %}
+
+    <div class="app-content content">
+      <div class="content-wrapper">
+        <div class="content-header row">
+          <div class="content-header-left col-md-8 col-12 mb-2 breadcrumb-new">
+            <h3 class="content-header-title mb-0 d-inline-block">{% trans 'Payments' %}</h3>
+            <div class="row breadcrumbs-top d-inline-block">
+              <div class="breadcrumb-wrapper col-12">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="{% url 'pesaify-dashboard' %}">{% trans 'Dashboard' %}</a>
+                  </li>
+                  <li class="breadcrumb-item"><a href="{% url 'pesaify-payments' %}">{% trans 'Payment' %}</a>
+                  </li>
+                  <li class="breadcrumb-item active">{% trans 'Details' %}
+                  </li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="content-body">
+            {% if not request.user.dismiss_message and request.user.message %}
+            <div class="alert alert-dismissable alert-success">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true" id="dismiss">&times;</button>
+                {{ request.user.message|safe }}
+            </div>
+            {% endif %}
+            <div class="row">
+                <div class="col-12  order-2">
+                    <section>
+                        <div class="container">
+
+                            <div class="row">
+                                <div class="col-lg-12 text-center">
+                                    <h2 class="section-heading">Invoice Details</h2>
+                                    <hr class="primary">
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h3>Information</h3>
+                                    <table class="table table-sm table-responsive-md removetopborder">
+                                        <tr>
+                                            <th>Business</th>
+                                            <td><a href="{% url 'pesaify-account-verification-step-one' %}">{{ request.user.business.legal_name }}</a></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Id</th>
+                                            <td>{{ invoice.uuid }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>State</th>
+                                            <td>{{ invoice.extra.status }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Created date</th>
+                                            <td>{{ invoice.current_time }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Expiration date</th>
+                                            <td>{{ invoice.expiration_time }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Monitoring date</th>
+                                            <td>{{ invoice.invoice_time }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Order Id</th>
+                                            <td>{{ invoice.extra.orderId }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Total fiat due</th>
+                                            <td>{{ invoice.extra.currency }}{{ invoice.extra.price|floatformat:7 }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Notification Email</th>
+                                            <td>{{ invoice.notification_email }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Notification Url</th>
+                                            <td>{{ invoice.notification_url }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Redirect Url</th>
+                                            <td>{{ invoice.redirect_url }}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div class="col-md-6">
+                                    <h3>Buyer information</h3>
+                                    <table class="table table-sm table-responsive-md removetopborder">
+                                        <tr>
+                                            <th>Name</th>
+                                            <td>{{ invoice.buyer.name }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Email</th>
+                                            <td><a href="mailto:{{ invoice.buyer.email }}">{{ invoice.buyer.email }}</a></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Phone</th>
+                                            <td>{{ invoice.buyer.phone }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Address 1</th>
+                                            <td>{{ invoice.buyer.address1 }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Address 2</th>
+                                            <td>{{ invoice.buyer.address2 }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>City</th>
+                                            <td>{{ invoice.buyer.locality }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>State</th>
+                                            <td>{{ invoice.buyer.region }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Country</th>
+                                            <td>{{ invoice.buyer.country }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Zip</th>
+                                            <td>{{ invoice.buyer.post_code }}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div style="margin-left: 15px; margin-bottom: 0px;">
+                                <div class="row">
+                                    <div class="col-md-12 invoice-payments">
+                                        <h3>Paid summary</h3>
+                                        <table class="table table-sm table-responsive-md">
+                                            <thead class="thead-inverse">
+                                                <tr>
+                                                    <th>Payment method</th>
+                                                    <th>Address</th>
+                                                    <th class="text-right">Rate</th>
+                                                    <th class="text-right">Paid</th>
+                                                    <th class="text-right">Due</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                    <tr>
+                                                        <td>BTC</td>
+                                                        <td title="{{ invoice.extra.bitcoinAddress }}">
+                                                            <span  class="text-truncate d-block" style="max-width: 400px">{{ invoice.extra.bitcoinAddress }}</span>
+                                                        </td>
+                                                        <td class="text-right">{{ invoice.extra.currency }}{{ invoice.extra.rate|intcomma }}</td>
+                                                        <td class="text-right">{{ invoice.extra.btcPaid|floatformat:7 }} BTC</td>
+                                                        <td class="text-right">{{ invoice.extra.btcDue|floatformat:7 }} BTC</td>
+                                                    </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block scripts %}
+    {{ block.super }}
+{% endblock %}
+
+{% block onbodyload %}
+    {{ block.super }}
+{% endblock %}

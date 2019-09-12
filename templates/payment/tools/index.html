@@ -1,0 +1,184 @@
+{% extends 'layout.html' %}
+{% load static i18n %}
+{% block title %}{% trans 'Payment Tools' %}{% endblock title %}
+
+{% block extrastyles %}
+{% endblock %}
+
+{% block content %}
+
+<div class="app-content content">
+    <div class="content-wrapper">
+        <div class="content-header row">
+          <div class="content-header-left col-md-8 col-12 mb-2 breadcrumb-new">
+            <h3 class="content-header-title mb-0 d-inline-block">{% trans 'Payment Tools' %}</h3>
+            <div class="row breadcrumbs-top d-inline-block">
+              <div class="breadcrumb-wrapper col-12">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="{% url 'pesaify-dashboard' %}">{% trans 'Dashboard' %}</a>
+                  </li>
+                  <li class="breadcrumb-item"><a href="{% url 'pesaify-payments' %}">{% trans 'Payments' %}</a>
+                  </li>
+                  <li class="breadcrumb-item active">{% trans 'Tools' %}
+                  </li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="content-body">
+
+            {% if not request.user.dismiss_message and request.user.message %}
+            <div class="alert alert-dismissable alert-success">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true" id="dismiss">&times;</button>
+                {{ request.user.message|safe }}
+            </div>
+            {% endif %}
+
+            <div class="row">
+                <div class="col-12 col-sm-12 ">
+                    <section class="">
+                        <div class="card-content">
+                            <div class="card-body">
+                                <div class="col-12">
+                                    <div class="row">
+                                        <div class="col-md-6 col-12">
+                                            <div class="transactions-table-tbody">
+                                                <section class="card pull-up">
+                                                    <a href="{% url 'pesaify-payment-tools-web-checkout' %}">
+                                                        <div class="card-content">
+                                                            <div class="card-body">
+                                                                <div class="col-12">
+                                                                    <div class="row">
+                                                                        <div class="col-12 col-sm-10 py-1">
+                                                                            <h4 class="text-bold-700 text-uppercase mb-0">{% trans ' Quick Checkout for Web ' %}</h4>
+                                                                            <p class="text-bold-200 text-muted mb-0">{% trans 'Quickly generate an invoice through a web interface.' %}</p>
+                                                                        </div>
+                                                                        <div class="col-12 col-sm-2 py-1">
+                                                                            <img src="{% static 'pesaify/images/qr-code.svg' %}" height="70px"/>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </a>
+                                                </section>
+                                            </div>
+                                        </div>
+                                        {% comment %} <div class="col-md-6 col-12">
+                                            <div class="transactions-table-tbody">
+                                                <section class="card pull-up">
+                                                    <a href="{% url 'pesaify-payment-tools-point-of-sale' %}">
+                                                        <div class="card-content">
+                                                            <div class="card-body">
+                                                                <div class="col-12">
+                                                                    <div class="row">
+                                                                        <div class="col-12 col-sm-10 py-1">
+                                                                            <h4 class="text-bold-700 text-uppercase mb-0">{% trans ' Point of Sale App' %}</h4>
+                                                                            <p class="text-bold-200 text-muted mb-0">{% trans 'Pesaify Checkout is a fast, simple interface for retail and mobile businesses to accept Bitcoin payments.' %}</p>
+                                                                        </div>
+                                                                        <div class="col-12 col-sm-2 py-1">
+                                                                            <img src="{% static 'pesaify/images/sale-point.svg' %}" height="70px"/>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </a>
+                                                </section>
+                                            </div>
+                                        </div> {% endcomment %}
+                                        <div class="col-md-6 col-12">
+                                            <div class="transactions-table-tbody">
+                                                <section class="card pull-up">
+                                                    <a href="{% url 'pesaify-payment-tools-email' %}">
+                                                        <div class="card-content">
+                                                            <div class="card-body">
+                                                                <div class="col-12">
+                                                                    <div class="row">
+                                                                        <div class="col-12 col-sm-10 py-1">
+                                                                            <h4 class="text-bold-700 text-uppercase mb-0">{% trans 'Email Billing' %}</h4>
+                                                                            <p class="text-bold-200 text-muted mb-0">{% trans 'Simple invoicing and billing to allow your clients to pay you using Bitcoin. ' %}</p>
+                                                                        </div>
+                                                                        <div class="col-12 col-sm-2 py-1">
+                                                                            <img src="{% static 'pesaify/images/envelope.svg' %}" height="70px"/>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </a>
+                                                </section>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 col-12">
+                                            <div class="transactions-table-tbody">
+                                                <section class="card pull-up">
+                                                    <a href="{% url 'pesaify-payment-tools-button' %}">
+                                                        <div class="card-content">
+                                                            <div class="card-body">
+                                                                <div class="col-12">
+                                                                    <div class="row">
+                                                                        <div class="col-12 col-sm-10 py-1">
+                                                                            <h4 class="text-bold-700 text-uppercase mb-0">{% trans 'Donate Buttons' %}</h4>
+                                                                            <p class="text-bold-200 text-muted mb-0">{% trans ' Add Pay with Pesaify buttons to your website to allow your customers to make payments using Bitcoin. ' %}</p>
+                                                                        </div>
+                                                                        <div class="col-12 col-sm-2 py-1">
+                                                                            <img src="{% static 'pesaify/images/payment-buttons.svg' %}" height="70px"/>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </a>
+                                                </section>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% comment %} <hr>
+                                    <div class="row">
+                                        <div class="col-md-6 col-12">
+                                            <div class="transactions-table-tbody">
+                                                <section class="card pull-up">
+                                                    <a href="{% url 'pesaify-payment-tools-api-token' %}">
+                                                        <div class="card-content">
+                                                            <div class="card-body">
+                                                                <div class="col-12">
+                                                                    <div class="row">
+                                                                        <div class="col-12 col-sm-10 py-1">
+                                                                            <h4 class="text-bold-700 text-uppercase mb-0">{% trans 'Manage API Tokens' %}</h4>
+                                                                            <p class="text-bold-200 text-muted mb-0">{% trans 'Add, revoke, or modify Pesaify API access tokens.' %}</p>
+                                                                        </div>
+                                                                        <div class="col-12 col-sm-2 py-1">
+                                                                            <img src="{% static 'pesaify/images/api-tokens.svg' %}" height="70px"/>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </a>
+                                                </section>
+                                            </div>
+                                        </div>
+                                    </div> {% endcomment %}
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+
+{% endblock %}
+
+
+{% block scripts %}
+    {{ block.super }}
+{% endblock %}
+
+{% block onbodyload %}
+    {{ block.super }}
+{% endblock %}

@@ -1,0 +1,104 @@
+{% extends 'layout.html' %}
+{% load static i18n humanize %}
+{% block title %}{% trans 'Payment Settlements' %}{% endblock title %}
+
+{% block extrastyles %}
+{% endblock %}
+
+
+{% block content %}
+
+    <div class="app-content content">
+      <div class="content-wrapper">
+        <div class="content-header row">
+          <div class="content-header-left col-md-8 col-12 mb-2 breadcrumb-new">
+            <h3 class="content-header-title mb-0 d-inline-block">{% trans 'Payments' %}</h3>
+            <div class="row breadcrumbs-top d-inline-block">
+              <div class="breadcrumb-wrapper col-12">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="{% url 'pesaify-dashboard' %}">{% trans 'Dashboard' %}</a>
+                  </li>
+                  <li class="breadcrumb-item active">{% trans 'Payments' %}
+                  </li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="content-body">
+            {% if not request.user.dismiss_message and request.user.message %}
+            <div class="alert alert-dismissable alert-success">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true" id="dismiss">&times;</button>
+                {{ request.user.message|safe }}
+            </div>
+            {% endif %}
+            <div class="row">
+                <div class="col-md-10 col-12  order-2">
+                    {% if request.user.settlement %}
+                    <div class="tab-content" id="v-tabContent">
+                        <div class="tab-pane fade active show" id="v-all" role="tabpanel" aria-labelledby="v-all-tab">
+                            <div id="accordion" class="collapse-icon accordion-icon-rotate left">
+                                <div class="card">
+                                    <div class="card-header" id="heading11">
+                                        <a class="card-title lead collapsed" data-toggle="collapse" data-target="#collapse11" aria-expanded="false" aria-controls="collapse11" href="#">How can I purchase project tokens?</a>
+                                    </div>
+                                    <div id="collapse11" class="collapse show" aria-labelledby="heading11" data-parent="#accordion">
+                                        <div class="card-body">
+                                            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card">
+                                    <div class="card-header" id="heading12">
+                                        <a class="card-title lead collapsed" data-toggle="collapse" data-target="#collapse12" aria-expanded="false" aria-controls="collapse12" href="#">How can I create a crypto-wallet?</a>
+                                    </div>
+                                    <div id="collapse12" class="collapse" aria-labelledby="heading12" data-parent="#accordion">
+                                        <div class="card-body">
+                                            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="tab-content" id="v-tabContent">
+                        <div class="tab-pane fade active show" id="v-settlements" role="tabpanel" aria-labelledby="v-settlements-tab">
+                            <div class="card-content collapse show">
+                                <div class="text-center card-body">
+                                    <h2>{% trans "No Settlements" %}</h2>
+                                    <div class="row clearfix mb-2">
+                                        <div class="col-12">
+                                            <img class="verify-image" src="{% static 'pesaify/images/no-payments.svg' %}" width="105px" height="105px" alt="">
+                                        </div>
+                                    </div>
+                                    <p class="mt-2">{% trans " Sorry. You have no settlements made. Any future settlements will be listed here for resolution. " %}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="col-md-2 col-12 order-1">
+                    <div class="nav flex-column nav-pills" id="v-tab" role="tablist" aria-orientation="vertical">
+                        <a class="nav-link" id="v-all-tab" href="{% url 'pesaify-payments' %}" role="tab" aria-controls="v-all" aria-selected="false">All</a>
+                        <a class="nav-link" id="v-paid-tab" href="{% url 'pesaify-payments-paid' %}" role="tab" aria-controls="v-paid" aria-selected="false">Paid</a>
+                        <a class="nav-link" id="v-unresolved-tab" href="{% url 'pesaify-payments-unresolved' %}" role="tab" aria-controls="v-unresolved" aria-selected="false">Unresolved</a>
+                        <a class="nav-link active show" id="v-settlements-tab" data-toggle="pill" href="#v-settlements" role="tab" aria-controls="v-settlements" aria-selected="true">Settlements</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block scripts %}
+    {{ block.super }}
+{% endblock %}
+
+{% block onbodyload %}
+    {{ block.super }}
+
+{% endblock %}

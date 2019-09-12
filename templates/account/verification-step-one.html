@@ -1,0 +1,253 @@
+{% extends 'layout.html' %}
+{% load static i18n %}
+{% block title %}{% trans 'Basic Verification' %}{% endblock title %}
+
+{% block extrastyles %}
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css">
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker-standalone.min.css">
+{% endblock %}
+
+{% block content %}
+
+<div class="app-content content">
+    <div class="content-wrapper">
+        <div class="content-header row">
+            <div class="content-header-left col-md-8 col-12 mb-2 breadcrumb-new">
+                <h3 class="content-header-title mb-0 d-inline-block">{% trans 'Verification' %}</h3>
+                <div class="row breadcrumbs-top d-inline-block">
+                    <div class="breadcrumb-wrapper col-12">
+                        <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'pesaify-account' %}">{% trans 'Account' %}</a>
+                        </li>
+                        <li class="breadcrumb-item"><a href="{% url 'pesaify-account-verification' %}">{% trans 'Verification' %}</a>
+                        </li>
+                        <li class="breadcrumb-item active">{% trans 'Step One' %}
+                        </li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-4 text-right mb-2">
+                <a href="{% url 'pesaify-account' %}" class="btn btn-info">{% trans 'Back' %}</a>
+            </div>
+        </div>
+        <div class="content-body">
+            {% if not request.user.dismiss_message and request.user.message %}
+            <div class="alert alert-dismissable alert-success">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true" id="dismiss">&times;</button>
+                {{ request.user.message|safe }}
+            </div>
+            {% endif %}
+            <div class="row">
+                <div class="col-12">
+                    <p class="text-bold-700 mb-0">{% trans "Basic verification will allow you to process real payments of up to $100 daily and $500 annually." %}</p>
+                    <p class="text-bold-200 mb-0">{% trans "We'll send you a confirmation email within a few minutes of submitting your verification." %}</p>
+                    <hr class="mb-2"/>
+                </div>
+
+                <div class="col-12">
+                    <section class="">
+                        <div class="card-content">
+                            <div class="card-body">
+                                <div class="col-12">
+                                    <div class="row">
+                                        <div class="col-md-12 col-12">
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <p class="text-bold-700 text-uppercase mb-0">{% trans 'Business' %}</p>
+                                                </div>
+                                            </div>
+                                            <small class="detail-error error"></small>
+                                            <hr/>
+                                            <form class="form-horizontal form-business-profile row mt-2" id="business-detail" action="#" method="PATCH">
+                                                {% csrf_token %}
+                                                <div class="col-6">
+                                                    <fieldset class="form-label-group">
+                                                        <input type="text" {% if request.GET.edit %} {% elif request.user.business.tier0 == "3" %}disabled{% endif %} class="form-control" id="legal-name" name="legal_name" required="" autofocus="" value="{{ request.user.business.legal_name }}">
+                                                        <label for="legal-name">{% trans 'Legal Name of Business' %} *</label>
+                                                        <small class="legal-name-error error"></small>
+                                                    </fieldset>
+                                                </div>
+                                                <div class="col-6">
+                                                    <fieldset class="form-label-group">
+                                                        <input type="text" {% if request.GET.edit %} {% elif request.user.business.tier0 == "3" %}disabled{% endif %} class="form-control" id="industry-name" name="industry_name" autofocus="" value="{{ request.user.business.industry_name }}">
+                                                        <label for="industry-name">{% trans 'Industry name' %}</label>
+                                                        <small class="industry-name-error error"></small>
+                                                    </fieldset>
+                                                </div>
+                                                <div class="col-12">
+                                                    <p class="text-bold-700 text-uppercase mb-0">{% trans 'Business Address ' %}</p>
+                                                    <p class="text-bold-200 mb-0">{% trans "Please provide the address where your business is legally registered." %}</p>
+                                                    <hr/>
+                                                </div>
+                                                <div class="col-4">
+                                                    <fieldset class="form-label-group">
+                                                        <select {% if request.GET.edit %} {% elif request.user.business.tier0 == "3" %}disabled{% endif %} class="form-control" id="country" required name="country">
+                                                            {% for country in countries %}
+                                                                <option value="{{ country.code }}" {% if request.user.business.country.code == country.code %}selected{% endif %}>{{ country.name }}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                        <small class="country-error error"></small>
+                                                    </fieldset>
+                                                </div>
+                                                <div class="col-8">
+                                                </div>
+                                                <div class="col-4">
+                                                    <fieldset class="form-label-group">
+                                                        <input type="text" {% if request.GET.edit %} {% elif request.user.business.tier0 == "3" %}disabled{% endif %} class="form-control" id="street-number" value="{{ request.user.business.street_number }}" required="" autofocus="" name="street_number">
+                                                        <label for="street-number">{% trans 'Street Number' %} *</label>
+                                                        <small class="street-number-error error"></small>
+                                                    </fieldset>
+                                                </div>
+                                                <div class="col-4">
+                                                    <fieldset class="form-label-group">
+                                                        <input type="text" {% if request.GET.edit %} {% elif request.user.business.tier0 == "3" %}disabled{% endif %} class="form-control" id="street-name" value="{{ request.user.business.street_name }}" required="" autofocus="" name="street_name">
+                                                        <label for="street-name">{% trans 'Street Name' %} *</label>
+                                                        <small class="street-name-error error"></small>
+                                                    </fieldset>
+                                                </div>
+                                                <div class="col-4">
+                                                    <fieldset class="form-label-group">
+                                                        <input type="text" {% if request.GET.edit %} {% elif request.user.business.tier0 == "3" %}disabled{% endif %} class="form-control" id="unit" value="{{ request.user.business.unit }}" autofocus="" name="unit">
+                                                        <label for="unit">{% trans 'Unit' %}</label>
+                                                        <small class="unit-error error"></small>
+                                                    </fieldset>
+                                                </div>
+                                                <div class="col-6">
+                                                    <fieldset class="form-label-group">
+                                                        <input type="text" {% if request.GET.edit %} {% elif request.user.business.tier0 == "3" %}disabled{% endif %} class="form-control" id="city" value="{{ request.user.business.city }}" required="" autofocus="" name="city">
+                                                        <label for="city">{% trans 'City' %} *</label>
+                                                        <small class="city-error error"></small>
+                                                    </fieldset>
+                                                </div>
+                                                <div class="col-6">
+                                                    <fieldset class="form-label-group">
+                                                        <input type="text" {% if request.GET.edit %} {% elif request.user.business.tier0 == "3" %}disabled{% endif %} class="form-control" id="region" value="{{ request.user.business.region }}" autofocus="" name="region">
+                                                        <label for="region">{% trans 'Region' %}</label>
+                                                        <small class="region-error error"></small>
+                                                    </fieldset>
+                                                </div>
+
+                                                <div class="col-12">
+                                                    <p class="text-bold-700 text-uppercase mb-0">{% trans 'Contact' %}</p>
+                                                    <hr/>
+                                                </div>
+                                                <div class="col-6">
+                                                    <fieldset class="form-label-group">
+                                                        <input type="text" {% if request.GET.edit %} {% elif request.user.business.tier0 == "3" %}disabled{% endif %} class="form-control" id="phone-number" name="phone_number" required="" autofocus="" value="{{ request.user.business.phone_number }}">
+                                                        <label for="phone-number-name">{% trans 'Phone Number' %} *</label>
+                                                        <small class="phone-number-error error"></small>
+                                                    </fieldset>
+                                                </div>
+                                                <div class="col-6">
+                                                    <fieldset class="form-label-group">
+                                                        <input type="text" {% if request.GET.edit %} {% elif request.user.business.tier0 == "3" %}disabled{% endif %} class="form-control" id="website" name="website" autofocus="" value="{{ request.user.business.website }}">
+                                                        <label for="website">{% trans 'Website or Business Profile' %}</label>
+                                                        <small class="website-error error"></small>
+                                                    </fieldset>
+                                                </div>
+
+                                                <div class="col-12">
+                                                    <p class="text-bold-700 text-uppercase mb-0">{% trans ' Beneficial Owner ' %}</p>
+                                                    <p class="text-bold-200 mb-0">{% trans "Please provide the full, legal name and date of birth of the beneficial owner of this business." %}</p>
+                                                    <hr/>
+                                                </div>
+                                                <div class="col-6">
+                                                    <fieldset class="form-label-group">
+                                                        <input type="text" {% if request.GET.edit %} {% elif request.user.business.tier0 == "3" %}disabled{% endif %} class="form-control" id="owner-first-name" name="owner_first_name" required="" autofocus="" value="{{ request.user.business.owner_first_name }}">
+                                                        <label for="owner-first-name">{% trans 'First name' %} *</label>
+                                                        <small class="owner-first-name-error error"></small>
+                                                    </fieldset>
+                                                </div>
+                                                <div class="col-6">
+                                                    <fieldset class="form-label-group">
+                                                        <input type="text" {% if request.GET.edit %} {% elif request.user.business.tier0 == "3" %}disabled{% endif %} class="form-control" id="owner-middle-name" name="owner_middle_name" autofocus="" value="{{ request.user.business.owner_middle_name }}">
+                                                        <label for="owner-middle-name">{% trans 'Middle name' %}</label>
+                                                        <small class="owner-middle-name-error error"></small>
+                                                    </fieldset>
+                                                </div>
+                                                <div class="col-6">
+                                                    <fieldset class="form-label-group">
+                                                        <input type="text" {% if request.GET.edit %} {% elif request.user.business.tier0 == "3" %}disabled{% endif %} class="form-control" id="owner-last-name" name="owner_last_name" required="" autofocus="" value="{{ request.user.business.owner_last_name }}">
+                                                        <label for="owner-last-name">{% trans 'Last name' %} *</label>
+                                                        <small class="owner-last-name-error error"></small>
+                                                    </fieldset>
+                                                </div>
+
+                                                <div class="col-6">
+                                                    <fieldset class="form-label-group">
+                                                        <input type="text" {% if request.GET.edit %} {% elif request.user.business.tier0 == "3" %}disabled{% endif %} class="form-control" id="owner-date-of-birth" value="{{ request.user.business.owner_date_of_birth|date:'Y-m-d' }}" required="" autofocus="" placeholder="{% trans 'Date of Birth' %}" name="owner_date_of_birth">
+                                                        <label for="owner-date-of-birth">{% trans 'Date Of Birth' %} *</label>
+                                                        <small class="owner-date-of-birth-error error"></small>
+                                                    </fieldset>
+                                                </div>
+                                                <div class="col-12">
+                                                    <p class="text-bold-200 mb-0">{% trans "Please ensure the above information is correct as you will not be able to make changes to this information later." %}</p>
+                                                </div>
+                                                {% if request.GET.edit or not request.user.business.tier0 == "3" %}
+                                                <div class="col-12 text-right">
+                                                    <button type="submit" class="btn btn-info">{% trans 'Verify' %}</button>
+                                                </div>
+                                                {% endif %}
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+                <div class="col-12 col-md-5">
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+    {{ block.super }}
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js" type="text/javascript"></script>
+{% endblock %}
+
+{% block onbodyload %}
+    {{ block.super }}
+    $('#business-detail').validate({
+        url: "{% url 'business-detail' request.user.business.id %}?step=1",
+        type: "PATCH",
+        event: 'submit',
+        beforeSend: function(jqXHR, setting) {
+            $("#business-detail button").html("<img src='{% static 'pesaify/images/loading.gif' %}' alt='' width='25' height='25'>");
+            $("#business-detail button").attr("disabled",true);
+            $(".error").html("");
+        },
+        success: function(data, textStatus, jqXHR) {
+            $("#business-detail button").html("{% trans 'Verify' %}");
+            $("#business-detail button").removeAttr("disabled");
+            window.location = '{% url "pesaify-dashboard-get-started" %}';
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            $("#business-detail button").html("{% trans 'Verify' %}");
+            $("#business-detail button").removeAttr("disabled");
+            $.each(jqXHR.responseJSON, function(index,value){
+                if(index == "detail") {
+                    $(".detail-error").html(value)
+                } else {
+                    result = ''
+                    $(value).each(function(index,value){result= result + "<p>"+value+"</p>"});
+                    $("." + index.replace(/_/g, '-') + "-error").html(result)
+                }
+            })
+        },
+    });
+
+    $('#owner-date-of-birth').datetimepicker({
+        format:'YYYY-MM-DD',
+        maxDate: '{% now "Y/m/d" %}'
+    });
+
+{% endblock %}

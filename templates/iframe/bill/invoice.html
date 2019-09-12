@@ -1,0 +1,36 @@
+{% extends 'iframe/layout.html' %}
+{% load static i18n %}
+{% block title %}{% trans 'Invoice Payment' %}{% endblock title %}
+
+{% block extrastyles %}
+{% endblock %}
+
+{% block content %}
+<div class="embed-responsive embed-responsive-16by9">
+    <iframe class="embed-responsive-item" src="{{ invoice.url }}&view=modal&animateEntrance=false" allowtransparency="true"></iframe>
+</div>
+{% endblock %}
+
+
+{% block scripts %}
+    {{ block.super }}
+{% endblock %}
+
+{% block onbodyload %}
+    {{ block.super }}
+    $(window).on('message', function(event) {
+        var uri;
+        if (event.data && event.data.open) {
+            uri = event.data.open;
+            if (uri.indexOf('bitcoin:') === 0) {
+                window.location = uri;
+            }
+        } else if (event.data && event.data.mailto) {
+            uri = event.data.mailto;
+            if (uri.indexOf('mailto:') === 0) {
+                window.location = uri;
+            }
+        }
+    });
+{% endblock %}
+

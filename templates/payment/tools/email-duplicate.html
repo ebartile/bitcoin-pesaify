@@ -1,0 +1,487 @@
+{% extends 'layout.html' %}
+{% load static i18n %}
+{% block title %}{% trans 'Email Billing' %}{% endblock title %}
+
+{% block extrastyles %}
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css">
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker-standalone.min.css">
+{% endblock %}
+
+{% block content %}
+
+<div class="app-content content">
+    <div class="content-wrapper">
+        <div class="content-header row">
+          <div class="content-header-left col-md-8 col-12 mb-2 breadcrumb-new">
+            <h3 class="content-header-title mb-0 d-inline-block">{% trans 'Email Billing' %}</h3>
+            <div class="row breadcrumbs-top d-inline-block">
+              <div class="breadcrumb-wrapper col-12">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="{% url 'pesaify-dashboard' %}">{% trans 'Dashboard' %}</a>
+                  </li>
+                  <li class="breadcrumb-item"><a href="{% url 'pesaify-payments' %}">{% trans 'Payments' %}</a>
+                  </li>
+                  <li class="breadcrumb-item"><a href="{% url 'pesaify-payment-tools' %}">{% trans 'Tools' %}</a>
+                  </li>
+                  <li class="breadcrumb-item"><a href="{% url 'pesaify-payment-tools-email' %}">{% trans 'Email' %}</a>
+                  </li>
+                  <li class="breadcrumb-item active">{% trans 'Add' %}
+                  </li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+        <form class="form-horizontal form-user-profile row mt-2" id="items-detail" action="#" method="POST">
+            {% csrf_token %}
+            <div class="content-body">
+                {% if not request.user.dismiss_message and request.user.message %}
+                <div class="alert alert-dismissable alert-success">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true" id="dismiss">&times;</button>
+                    {{ request.user.message|safe }}
+                </div>
+                {% endif %}
+                <div class="row">
+                    <div class="col-12 col-md-8 offset-md-2">
+                        <section class="card">
+                            <small class="detail-error error"></small>
+                            <div class="card-content">
+                                <div class="card-body row">
+                                    <div class="col-12">
+                                        <p class="text-bold-700 text-uppercase mb-0">{% trans 'Buyer Information' %}</p>
+                                        <hr>
+                                    </div>
+                                    <div class="col-12 col-md-10">
+                                        <fieldset class="form-label-group">
+                                            <input type="text" class="form-control" id="email" name="email" required="" value="{{ bill.email }}">
+                                            <label for="email">{% trans ' Email ' %} *</label>
+                                            <small class="email-error error"></small>
+                                        </fieldset>
+                                    </div>
+
+                                    <div class="col-12 col-md-2">
+                                        <a id="cc" href="#"><p class="text-bold-200 {% if bill.cc_email %}active{% endif %}">{% if bill.cc_email %}Remove CC{% else %}Add CC{% endif %}</p></a>
+                                    </div>
+
+                                    <div class="col-12" id="cc-append">
+                                        {% if bill.cc_email %}
+                                        <fieldset class="form-label-group">
+                                            <input type="text" class="form-control" id="cc-email" autofocus="" name="cc_email" value="{{ bill.cc_email }}">
+                                            <label for="cc-email">{% trans ' CC Recipient ' %}</label>
+                                            <small class="cc-email-error error"></small>
+                                        </fieldset>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-12">
+                                        <fieldset class="form-label-group">
+                                            <select class="form-control" id="delivery" required name="delivery">
+                                                <option {% if bill.delivery == 'email' %}selected{% endif %} value="email">{% trans 'Share Bill via Email' %}</option>
+                                                <option {% if bill.delivery == 'url' %}selected{% endif %} value="url">{% trans 'Share Bill via Url' %}</option>
+                                            </select>
+                                            <small class="delivery-error error"></small>
+                                        </fieldset>
+                                    </div>
+                                    <div class="col-12 mb-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="info" id="info" {% if bill.info %}checked{% endif %}>
+                                            <label class="form-check-label" for="info">
+                                                <span class="text-bold-200 mb-0">{% trans "Include buyer address" %}</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 row" id="info-append">
+                                        {% if bill.info %}
+                                        <div class="col-12 col-md-6">
+                                            <fieldset class="form-label-group">
+                                                <input type="text" class="form-control" id="address" autofocus="" name="address" value="{{ bill.address }}" required="">
+                                                <label for="address">{% trans 'Address' %}</label>
+                                                <small class="address-error error"></small>
+                                            </fieldset>
+                                        </div>
+                                        <div class="col-12 col-md-6">
+                                            <fieldset class="form-label-group">
+                                                <input type="text" class="form-control" id="city" autofocus="" name="city" value="{{ bill.city }}" required="">
+                                                <label for="city">{% trans 'City' %}</label>
+                                                <small class="city-error error"></small>
+                                            </fieldset>
+                                        </div>
+                                        <div class="col-12 col-md-6">
+                                            <fieldset class="form-label-group">
+                                                <input type="text" class="form-control" id="region" autofocus="" name="region" value="{{ bill.region }}" required="">
+                                                <label for="region">{% trans 'Region' %}</label>
+                                                <small class="region-error error"></small>
+                                            </fieldset>
+                                        </div>
+                                        <div class="col-12 col-md-6">
+                                            <fieldset class="form-label-group">
+                                                <input type="text" class="form-control" id="post-code" autofocus="" name="post_code" value="{{ bill.post_code }}" required="">
+                                                <label for="post-code">{% trans 'Post Code' %}</label>
+                                                <small class="post-code-error error"></small>
+                                            </fieldset>
+                                        </div>
+                                        <div class="col-12 col-md-6">
+                                            <fieldset class="form-label-group">
+                                                <select class="form-control" id="country" required name="country">
+                                                    {% for country in countries %}
+                                                        <option value="{{ country.code }}" {% if bill.country.code == country.code %}selected{% endif %}>{{ country.name }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                                <small class="country-error error"></small>
+                                            </fieldset>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-12">
+                                        <p class="text-bold-700 text-uppercase mb-0">{% trans 'Bill Info' %}</p>
+                                        <hr>
+                                    </div>
+                                    <div class="col-12">
+                                        <fieldset class="form-label-group">
+                                            <select class="form-control" id="currency" required name="currency">
+                                                {% for currency in currencies %}
+                                                <option {% if bill.currency == currency.0  %}selected{% endif %} value="{{ currency.0 }}">{{ currency.1 }}</option>
+                                                {% endfor %}
+                                            </select>
+                                            <small class="currency-error error"></small>
+                                        </fieldset>
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <fieldset class="form-label-group">
+                                            <input type="text" class="form-control" id="due-date" autofocus="" placeholder="{% trans 'Due Date' %}" name="due_date" required="">
+                                            <label for="due-date">{% trans 'Due Date' %}</label>
+                                            <small class="due-date-error error"></small>
+                                        </fieldset>
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <fieldset class="form-label-group">
+                                            <input type="text" class="form-control" id="bill-number" autofocus="" name="bill_number">
+                                            <label for="bill-number">{% trans 'Bill Number' %}</label>
+                                            <small class="bill-number-error error"></small>
+                                        </fieldset>
+                                    </div>
+                                    <div class="col-12 col-md-6 mb-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="processing_fee" id="processing-fee" {% if bill.processing_fee %}checked{% endif %}>
+                                            <label class="form-check-label" for="processing-fee">
+                                                <span class="text-bold-200 mb-0">{% trans "Add Pesaify (1%) Proccessing Fee" %}</span>
+                                            </label>
+                                            <small class="processing-fee-error error"></small>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-6 mb-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="recurring" id="recurring"  {% if bill.recurring %}checked{% endif %}>
+                                            <label class="form-check-label" for="recurring">
+                                                <span class="text-bold-200 mb-0">{% trans "This is a recurring bill" %}</span>
+                                            </label>
+                                            <small class="recurring-error error"></small>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 row" id="recurring-append">
+                                        {% if bill.recurring %}
+                                        <div class="col-12 col-md-6">
+                                            <fieldset class="form-label-group">
+                                                <select class="form-control" id="resend" required name="resend">
+                                                    <option {% if bill.scheduledbill.periodic_task.interval.every == 7 %}selected{% endif %} value="week">{% trans 'Weekly' %}</option>
+                                                    <option {% if bill.scheduledbill.periodic_task.interval.every == 30 %}selected{% endif %} value="month">{% trans 'Monthly' %}</option>
+                                                    <option {% if bill.scheduledbill.periodic_task.interval.every == 120 %}selected{% endif %} value="quarter">{% trans 'Quarterly' %}</option>
+                                                    <option {% if bill.scheduledbill.periodic_task.interval.every == 365 %}selected{% endif %} value="year">{% trans 'Yearly' %}</option>
+                                                </select>
+                                                <small class="resend-error error"></small>
+                                            </fieldset>
+                                        </div>
+                                        <div class="col-12 col-md-6">
+                                            <fieldset class="form-label-group">
+                                                <input type="text" class="form-control" id="send-on" autofocus="" name="send_on" required="">
+                                                <label for="send-on">{% trans 'Send On' %}</label>
+                                                <small class="send-on-error error"></small>
+                                            </fieldset>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+
+                                </div>
+                            </div>
+                        </section>
+
+                        <div class="js-inline-admin-formset inline-group" id="items-group" data-inline-type="tabular" data-inline-formset="{&quot;name&quot;: &quot;#items&quot;, &quot;options&quot;: {&quot;prefix&quot;: &quot;items&quot;, &quot;addText&quot;: &quot;Add another item&quot;, &quot;deleteText&quot;: &quot;Remove&quot;}}">
+                            <div class="tabular inline-related ">
+                                <input type="hidden" name="items-TOTAL_FORMS" value="1" id="id_items-TOTAL_FORMS" autocomplete="off">
+                                <input type="hidden" name="items-INITIAL_FORMS" value="1" id="id_items-INITIAL_FORMS">
+                                <input type="hidden" name="items-MIN_NUM_FORMS" value="1" id="id_items-MIN_NUM_FORMS">
+                                <input type="hidden" name="items-MAX_NUM_FORMS" value="1000" id="id_items-MAX_NUM_FORMS" autocomplete="off">
+                                <div class="table-responsive card">
+                                    <table class="table table-hover table-xl mb-0">
+
+                                        <tbody>
+                                            {% for item in bill.billitems %}
+                                            <tr class="form-row row dynamic-items" id="items-{{ forloop.counter0 }}">
+                                                <td class="field-name col-12 col-md-3">
+                                                    <fieldset class="form-label-group">
+                                                        <input type="text" name="name-items-{{ forloop.counter0 }}" required="" class="form-control" autofocus="" maxlength="200" id="name-items-{{ forloop.counter0 }}" value="{{ item.name }}">
+                                                        <label for="id_items-{{ forloop.counter0 }}-name">{% trans 'Item' %} *</label>
+                                                        <small class="name-items-{{ forloop.counter0 }}-error error"></small>
+                                                    </fieldset>
+                                                </td>
+                                                <td class="field-price col-12 col-md-3">
+                                                    <fieldset class="form-label-group">
+                                                        <input type="number" name="price-items-{{ forloop.counter0 }}" value="0.00001"  step="0.000001" class="form-control price" autofocus="" min="0.000001" id="price-items-{{ forloop.counter0 }}" value="{{ item.price }}">
+                                                        <label for="id_items-{{ forloop.counter0 }}-price">{% trans 'Price' %} *</label>
+                                                        <small class="price-items-{{ forloop.counter0 }}-error error"></small>
+                                                    </fieldset>
+                                                </td>
+                                                <td class="field-quantity col-12 col-md-3">
+                                                    <fieldset class="form-label-group">
+                                                        <input type="number" name="quantity-items-{{ forloop.counter0 }}"  value="1" class="form-control quantity" autofocus="" min="1" maxlength="200" id="quantity-items-{{ forloop.counter0 }}" value="{{ item.quantity }}">
+                                                        <label for="id_items-{{ forloop.counter0 }}-quantity">{% trans 'Quantity' %} *</label>
+                                                        <small class="quantity-items-{{ forloop.counter0 }}-error error"></small>
+                                                    </fieldset>
+                                                </td>
+                                                <td class="field-quantity col-12 col-md-3">
+                                                    <fieldset class="form-label-group">
+                                                        <input type="text" class="form-control amount" value="0" autofocus=""  step="0.00001" maxlength="200" min="0" id="amount-{{ forloop.counter0 }}" disabled value="{{ item.amount }}">
+                                                        <label for="id_items-{{ forloop.counter0 }}-amount">{% trans 'Amount' %}(<span class="currency-code">BTC</span>)</label>
+                                                    </fieldset>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                            <tr class="form-row row empty-form" id="items-empty">
+                                                <td class="field-name col-12 col-md-3">
+                                                    <fieldset class="form-label-group">
+                                                        <input type="text" name="name-items-__prefix__" class="form-control" autofocus="" maxlength="200" id="name-items-__prefix__">
+                                                        <label for="id_iitems-__prefix__-name">{% trans 'Item' %} *</label>
+                                                        <small class="name-items-__prefix__-error error"></small>
+                                                    </fieldset>
+                                                </td>
+                                                <td class="field-price col-12 col-md-3">
+                                                    <fieldset class="form-label-group">
+                                                        <input type="number" name="price-items-__prefix__"  value="0.00001"  step="0.000001" class="form-control price" autofocus="" min="0.000001" id="price-items-__prefix__">
+                                                        <label for="id_items-__prefix__-price">{% trans 'Price' %} *</label>
+                                                        <small class="price-items-__prefix__-error error"></small>
+                                                    </fieldset>
+                                                </td>
+                                                <td class="field-quantity col-12 col-md-3">
+                                                    <fieldset class="form-label-group">
+                                                        <input type="number" name="quantity-items-__prefix__"  value="0" class="form-control quantity" autofocus="" min="0" id="quantity-items-__prefix__">
+                                                        <label for="id_items-__prefix__-quantity">{% trans 'Quantity' %} *</label>
+                                                        <small class="quantity-items-__prefix__-error error"></small>
+                                                    </fieldset>
+                                                </td>
+                                                <td class="field-quantity col-12 col-md-3">
+                                                    <fieldset class="form-label-group">
+                                                        <input type="text" class="form-control amount" value="0" autofocus=""  step="0.00001" maxlength="200" min="0" id="amount-items-__prefix__" disabled>
+                                                        <label for="id_items-__prefix__-amount">{% trans 'Amount' %}(<span class="currency-code">{{ item.bill.currency }}</span>)</label>
+                                                    </fieldset>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <section class="card text-right bg-info">
+                            <div class="card-content">
+                                <div class="card-body row">
+                                    <div class="col-12">
+                                        <h2 class="white mb-0">{% trans "Order Total" %} <span class="white" id="final-amount">{{ bill.amount|floatformat:7 }}</span>(<span class="white currency-code">{{ bill.currency }}</span>)</h2>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <div class="col-12 text-right mb-4">
+                            <a href="{% url 'pesaify-payment-tools-email' %}" class="btn btn-default">{% trans 'Cancel' %}</a>
+                            <button type="submit" class="btn btn-info">{% if bill.recurring %}{% trans 'Schedule Bill' %}{% else %}{% trans 'Create Bill' %}{% endif %}</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </form>
+      </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    {{ block.super }}
+    <script src="{% static 'pesaify/js/inlines.js' %}"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js" type="text/javascript"></script>
+{% endblock %}
+
+{% block onbodyload %}
+    {{ block.super }}
+    $('#email').multiple_emails({position: "bottom"});
+    {% if bill.cc_email %}
+    $('#cc-email').multiple_emails({position: "bottom"});
+    {% endif %}
+
+    {% if bill.recurring %}
+    $('#send-on').datetimepicker({
+        format:'YYYY-MM-DD',
+        minDate: '{% now "Y/m/d" %}'
+    });
+    {% endif %}
+
+    $("#processing-fee").on('change', function(){
+        var total = 0;
+        $(".amount").each(function(i,v){
+            total += parseFloat($(v).val());
+            if($("#processing-fee").prop("checked") == true) {
+                $("#final-amount").html((total + parseFloat(total*0.01)).toFixed(6));
+            } else {
+                $("#final-amount").html(parseFloat(total).toFixed(6));
+            }
+        });
+    });
+    $(".price, .quantity").on('change', function(){
+        $(this).parent().parent().parent().find(".amount").attr("value",$(this).parent().parent().parent().find(".price").val() * $(this).parent().parent().parent().find(".quantity").val());
+        var total = 0;
+        $(".amount").each(function(i,v){
+            total += parseFloat($(v).val());
+            if($("#processing-fee").prop("checked") == true) {
+                $("#final-amount").html((total + parseFloat(total*0.01)).toFixed(6));
+            } else {
+                $("#final-amount").html(total.toFixed(6));
+            }
+        });
+    });
+    $(".price").trigger("change");
+    $("#currency").on('change', function(){
+        $(".currency-code").html($(this).val());
+    });
+    $("#info").on('change', function(){
+        if($(this).prop("checked") == true) {
+            $("#info-append").html(`
+                <div class="col-12 col-md-6">
+                    <fieldset class="form-label-group">
+                        <input type="text" class="form-control" id="address" autofocus="" name="address" required="">
+                        <label for="address">{% trans 'Address' %}</label>
+                        <small class="address-error error"></small>
+                    </fieldset>
+                </div>
+                <div class="col-12 col-md-6">
+                    <fieldset class="form-label-group">
+                        <input type="text" class="form-control" id="city" autofocus="" name="city" required="">
+                        <label for="city">{% trans 'City' %}</label>
+                        <small class="city-error error"></small>
+                    </fieldset>
+                </div>
+                <div class="col-12 col-md-6">
+                    <fieldset class="form-label-group">
+                        <input type="text" class="form-control" id="region" autofocus="" name="region" required="">
+                        <label for="region">{% trans 'Region' %}</label>
+                        <small class="region-error error"></small>
+                    </fieldset>
+                </div>
+                <div class="col-12 col-md-6">
+                    <fieldset class="form-label-group">
+                        <input type="text" class="form-control" id="post-code" autofocus="" name="post_code" required="">
+                        <label for="post-code">{% trans 'Post Code' %}</label>
+                        <small class="post-code-error error"></small>
+                    </fieldset>
+                </div>
+                <div class="col-12 col-md-6">
+                    <fieldset class="form-label-group">
+                        <select class="form-control" id="country" required name="country" required="">
+                            {% for country in countries %}
+                                <option value="{{ country.code }}">{{ country.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <small class="country-error error"></small>
+                    </fieldset>
+                </div>
+
+            `);
+        } else {
+            $("#info-append").html("");
+        }
+    });
+    $("#recurring").on('change', function(){
+        if($(this).prop("checked") == true) {
+            $("#items-detail button").html("{% trans 'Schedule Bill' %}");
+            $("#recurring-append").html(`
+                <div class="col-12 col-md-6">
+                    <fieldset class="form-label-group">
+                        <select class="form-control" id="resend" required name="resend">
+                            <option value="week">{% trans 'Weekly' %}</option>
+                            <option value="month">{% trans 'Monthly' %}</option>
+                            <option value="quarter">{% trans 'Quarterly' %}</option>
+                            <option value="year">{% trans 'Yearly' %}</option>
+                        </select>
+                        <small class="resend-error error"></small>
+                    </fieldset>
+                </div>
+                <div class="col-12 col-md-6">
+                    <fieldset class="form-label-group">
+                        <input type="text" class="form-control" id="send-on" autofocus="" name="send_on" required="">
+                        <label for="send-on">{% trans 'Send On' %}</label>
+                        <small class="send-on-error error"></small>
+                    </fieldset>
+                </div>
+            `);
+            $('#send-on').datetimepicker({
+                format:'YYYY-MM-DD',
+                minDate: '{% now "Y/m/d" %}'
+            });
+        } else {
+            $("#items-detail button").html("{% trans 'Create Bill' %}");
+            $("#recurring-append").html("");
+        }
+    });
+
+    $("#cc").on('click', function(e){
+        e.preventDefault();
+        if(!$(this).hasClass('active')) {
+            $(this).html("Add CC");
+            $(this).addClass('active');
+            $("#cc-append").html("");
+        } else {
+            $(this).html("Remove CC");
+            $(this).removeClass('active');
+            $("#cc-append").html(`
+                <fieldset class="form-label-group">
+                    <input type="text" class="form-control" id="cc-email" name="cc_email" required="">
+                    <label for="cc-email">{% trans ' CC Recipient ' %}</label>
+                    <small class="cc-email-error error"></small>
+                </fieldset>
+            `);
+            $('#cc-email').multiple_emails({position: "bottom"});
+
+        }
+    });
+    $('#items-detail').validate({
+        url: "{% url 'email-bill-list' %}",
+        type: "POST",
+        event: 'submit',
+        beforeSend: function(jqXHR, setting) {
+            $("#items-detail button").html("<img src='{% static 'pesaify/images/loading.gif' %}' alt='' width='25' height='25'>");
+            $("#items-detail button").attr("disabled",true);
+            $(".error").html("");
+        },
+        success: function(data, textStatus, jqXHR) {
+            $("#items-detail button").html("{% trans 'Create Bill' %}");
+            $("#items-detail button").removeAttr("disabled");
+            window.location = '{% url "pesaify-payment-tools-email" %}';
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            $("#items-detail button").html("{% trans 'Create Bill' %}");
+            $("#items-detail button").removeAttr("disabled");
+            $.each(jqXHR.responseJSON, function(index,value){
+                if(index == "detail") {
+                    $(".detail-error").html(value)
+                } else {
+                    result = ''
+                    $(value).each(function(index,value){result= result + "<p>"+value+"</p>"});
+                    $("." + index.replace(/_/g, '-') + "-error").html(result)
+                }
+            })
+        },
+    });
+    $('#due-date').datetimepicker({
+        format:'YYYY-MM-DD',
+        minDate: '{% now "Y/m/d" %}'
+    });
+{% endblock %}

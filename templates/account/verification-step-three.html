@@ -1,0 +1,150 @@
+{% extends 'layout.html' %}
+{% load static i18n %}
+{% block title %}{% trans 'Approved Volume' %}{% endblock title %}
+
+{% block extrastyles %}
+{% endblock %}
+
+{% block content %}
+
+<div class="app-content content">
+    <div class="content-wrapper">
+        <div class="content-header row">
+            <div class="content-header-left col-md-8 col-12 mb-2 breadcrumb-new">
+                <h3 class="content-header-title mb-0 d-inline-block">{% trans 'Verification' %}</h3>
+                <div class="row breadcrumbs-top d-inline-block">
+                    <div class="breadcrumb-wrapper col-12">
+                        <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'pesaify-account' %}">{% trans 'Account' %}</a>
+                        </li>
+                        <li class="breadcrumb-item"><a href="{% url 'pesaify-account-verification' %}">{% trans 'Verification' %}</a>
+                        </li>
+                        <li class="breadcrumb-item active">{% trans 'Step Three' %}
+                        </li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-4 text-right mb-2">
+                <a href="{% url 'pesaify-account-verification' %}" class="btn btn-info">{% trans 'Back' %}</a>
+            </div>
+        </div>
+        <div class="content-body">
+            {% if not request.user.dismiss_message and request.user.message %}
+            <div class="alert alert-dismissable alert-success">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true" id="dismiss">&times;</button>
+                {{ request.user.message|safe }}
+            </div>
+            {% endif %}
+            <div class="row">
+                <div class="col-12">
+                    <p class="text-bold-700 mb-0">{% trans " Up to $10,000 daily, $500,000 annually " %}</p>
+                    <p class="text-bold-500 mb-0">{% trans " Tier 2 " %}</p>
+                    <p class="text-bold-200 mb-0">{% trans " On average, verification takes 2-4 business days - we'll notify you via email upon approval. " %}</p>
+                    <hr class="mb-2"/>
+                </div>
+
+                <div class="col-12">
+                    <section class="">
+                        <div class="card-content">
+                            <div class="card-body">
+                                <div class="col-12">
+                                    <div class="row">
+                                        <div class="col-md-12 col-12">
+                                            <small class="detail-error error"></small>
+                                            <hr/>
+                                            <form class="form-horizontal form-business-profile row mt-2" id="business-detail" action="#" method="PATCH">
+                                                {% csrf_token %}
+                                                <div class="row">
+                                                    <div class="col-12">
+                                                        <p class="text-bold-700 text-uppercase mb-0">{% trans ' There are a few specific types of document(s) we will need to approve your upgrade. ' %}</p>
+                                                        <ul>
+                                                            <li>
+                                                                {% trans 'Address Verification example of a utility bill' %}
+                                                                <fieldset class="form-label-group">
+                                                                    <input type="file" {% if request.user.business.tier2 == "3" %}disabled{% endif %} class="form-control" accept="application/pdf, image/vnd.sealedmedia.softseal-jpg, image/png, image/jpeg, image/jpg, image/gif" name="proof_of_address" required="">
+                                                                    <small class=""><a href="{% if request.user.business.proof_of_address %}{{ request.user.business.proof_of_address.url }}{% endif %}">{% if request.user.business.owner_photo %}{{ request.user.business.owner_photo.url }}{% endif %}</a></small>
+                                                                    <small class="proof-of-address-error error"></small>
+                                                                </fieldset>
+                                                                <br><img src="{% static 'pesaify/images/exutility.png' %}"/>
+                                                            </li>
+                                                            <li>
+                                                                {% trans 'Photo Identification example of passport or national id' %}<br>
+                                                                <fieldset class="form-label-group">
+                                                                    <input type="file" {% if request.user.business.tier2 == "3" %}disabled{% endif %} class="form-control" accept="application/pdf, image/vnd.sealedmedia.softseal-jpg, image/png, image/jpeg, image/jpg, image/gif" name="owner_photo" required="">
+                                                                    <small class=""><a href="{% if request.user.business.owner_photo %}{{ request.user.business.owner_photo.url }}{% endif %}">{% if request.user.business.owner_photo %}{{ request.user.business.owner_photo.url }}{% endif %}</a></small>
+                                                                    <small class="owner-photo-error error"></small>
+                                                                </fieldset>
+                                                                <img src="{% static 'pesaify/icons/passport-illustration.svg' %}">
+                                                                <img src="{% static 'pesaify/icons/driving-license-illustration.svg' %}">
+                                                            </li>
+                                                        </ul>
+                                                        <p class="text-bold-200 mb-0">{% trans ' * Only png, jpg/jpeg, or pdf files under 5MB will be accepted. ' %}</p>
+                                                        <p class="text-bold-200 mb-0">{% trans ' * Please note: Uploads will not be processed unless all required documents have been selected. ' %}</p>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-12">
+                                                    <p class="text-bold-200 mb-0">{% trans "Please ensure the above information is correct as you will not be able to make changes to this information later." %}</p>
+                                                </div>
+                                                {% if not request.user.business.tier2 == "3" %}
+                                                <div class="col-12 text-right">
+                                                    <button type="submit" class="btn btn-info">{% trans 'Verify' %}</button>
+                                                </div>
+                                                {% endif %}
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+                <div class="col-12 col-md-5">
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+    {{ block.super }}
+{% endblock %}
+
+{% block onbodyload %}
+    {{ block.super }}
+    $('#business-detail').validate({
+        url: "{% url 'business-detail' request.user.business.id %}?step=3",
+        type: "PATCH",
+        event: 'submit',
+        beforeSend: function(jqXHR, setting) {
+            $("#business-detail button").html("<img src='{% static 'pesaify/images/loading.gif' %}' alt='' width='25' height='25'>");
+            $("#business-detail button").attr("disabled",true);
+            $(".error").html("");
+        },
+        success: function(data, textStatus, jqXHR) {
+            $("#business-detail button").html("{% trans 'Verify' %}");
+            $("#business-detail button").removeAttr("disabled");
+            window.location = '{% url "pesaify-account-verification" %}';
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            $("#business-detail button").html("{% trans 'Verify' %}");
+            $("#business-detail button").removeAttr("disabled");
+            $.each(jqXHR.responseJSON, function(index,value){
+                if(index == "detail") {
+                    $(".detail-error").html(value)
+                } else {
+                    result = ''
+                    $(value).each(function(index,value){result= result + "<p>"+value+"</p>"});
+                    $("." + index.replace(/_/g, '-') + "-error").html(result)
+                }
+            })
+        },
+    });
+
+
+{% endblock %}

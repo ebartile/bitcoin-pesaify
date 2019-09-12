@@ -1,0 +1,127 @@
+{% extends 'layout.html' %}
+{% load static i18n %}
+{% block title %}{% trans 'Email Billing' %}{% endblock title %}
+
+{% block extrastyles %}
+{% endblock %}
+
+{% block content %}
+
+<div class="app-content content">
+    <div class="content-wrapper">
+        <div class="content-header row">
+          <div class="content-header-left col-md-8 col-12 mb-2 breadcrumb-new">
+            <h3 class="content-header-title mb-0 d-inline-block">{% trans 'Email Billing' %}</h3>
+            <div class="row breadcrumbs-top d-inline-block">
+              <div class="breadcrumb-wrapper col-12">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="{% url 'pesaify-dashboard' %}">{% trans 'Dashboard' %}</a>
+                  </li>
+                  <li class="breadcrumb-item"><a href="{% url 'pesaify-payments' %}">{% trans 'Payments' %}</a>
+                  </li>
+                  <li class="breadcrumb-item"><a href="{% url 'pesaify-payment-tools' %}">{% trans 'Tools' %}</a>
+                  </li>
+                  <li class="breadcrumb-item active">{% trans 'Email Billing' %}
+                  </li>
+                </ol>
+              </div>
+            </div>
+          </div>
+          <div class="content-header-right col-md-4 col-12 d-none d-md-inline-block">
+            <div class="btn-group float-md-right"><a class="btn btn-outline-info" href="{% url 'pesaify-payment-tools-email-add' %}">{% trans 'New Bill' %}</a></div>
+          </div>
+        </div>
+        <div class="content-body">
+            {% if not request.user.dismiss_message and request.user.message %}
+            <div class="alert alert-dismissable alert-success">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true" id="dismiss">&times;</button>
+                {{ request.user.message|safe }}
+            </div>
+            {% endif %}
+            <div class="">
+                {% if emailbills %}
+                <div id="transactions">
+                    <div class="transactions-table-tbody row">
+                        {% for bill in emailbills %}
+                        <section class="card pull-up col-md-12 text-center">
+                          <a href="{% url 'pesaify-payment-tools-email-details' bill.uuid %}">
+                            <div class="card-content">
+                                <div class="card-body">
+                                    <div class="col-12">
+                                        <div class="row">
+                                            <div class="col-12 col-md-4">
+                                                <span class="d-inline-block d-md-none text-bold-700 mb-2">{% trans 'Email' %}: </span>{% if bill.delivery == 'email' %}<i class="fa fa-envelope-o"></i>{% else %}<i class="fa fa-link"></i>{% endif %}<span> {% for email in bill.emaillist %}{% if forloop.counter0 == 0 %}{{ email }}{% endif %}<br>{% endfor %}</span>
+                                            </div>
+                                            <div class="col-12 col-md-3">
+                                                <span class="d-inline-block d-md-none text-bold-700 mb-2">{% trans 'Due Date' %}: <b></span> <span>{% if bill.recurring %}Scheduled Bill{% else %}Due {{ bill.due_date }}{% endif %}</span></b>
+                                            </div>
+                                            <div class="col-12 col-md-2">
+                                                <span class="d-inline-block d-md-none text-bold-700 mb-2">{% trans 'Form' %}: </span>
+                                                {% if bill.recurring %}
+                                                <button class="btn-sm btn btn-outline-warning round">{% trans 'Scheduled ' %} {% if bill.scheduledbill.periodic_task.interval.every == 7 %}Weekly{% elif bill.scheduledbill.periodic_task.interval.every == 30 %}Monthly{% elif bill.scheduledbill.periodic_task.interval.every == 120 %}Quarterly{% elif bill.scheduledbill.periodic_task.interval.every == 365 %}Yearly{% endif %}</button>
+                                                {% elif bill.delivery == 'email' %}
+                                                <button class="btn-sm btn btn-outline-success round">Email Sent</button>
+                                                {% else %}
+                                                <button class="btn-sm btn btn-outline-success round">Generated Bill Link</button>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-12 col-md-3">
+                                                <span class="d-inline-block d-md-none text-bold-700 mb-2">{% trans 'Amount' %}: </span> <b>{{ bill.amount|floatformat:7 }} {{ bill.currency }}</b>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                          </a>
+                        </section>
+                        {% endfor %}
+                        {% if emailbills %}
+                        <div class="col-12 text-center">
+                        {% include "partials/pagination.html" with paginator=emailbills %}
+                        </div>
+                        {% endif %}
+
+                    </div>
+                </div>
+                {% else %}
+                <div class="col-12 col-md-8 offset-md-2">
+                    <section class="">
+                        <div class="card-content">
+                            <div class="card-body">
+                                <div class="col-12 col-md-6 offset-md-3">
+                                    <div class="">
+                                        <div class="card-content collapse show">
+                                            <div class="text-center card-body">
+                                                <div class="mt-4 row clearfix mb-2">
+                                                    <div class="col-12">
+                                                        <img class="verify-image" src="{% static 'pesaify/images/envelope.svg' %}" width="75px" height="75px" alt="">
+                                                    </div>
+                                                </div>
+                                                <p class="text-bold-700 text-uppercase mb-0 text-success">{% trans 'Get Started with Billing' %}</p>
+                                                <p class="mt-4 mb-3">{% trans "Pesaify allows you to send bills via email directly from your account. Recurring and one-off bills can be created, sent, and managed here" %}</p>
+                                                <div class="btn-group center"><a class="btn btn-outline-info" href="{% url 'pesaify-payment-tools-email-add' %}">{% trans 'Create a Bill' %}</a></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block scripts %}
+    {{ block.super }}
+{% endblock %}
+
+{% block onbodyload %}
+    {{ block.super }}
+
+{% endblock %}

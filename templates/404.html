@@ -1,0 +1,11 @@
+{% extends "error.html" %}
+{% load i18n %}
+
+{% block title %}
+{% trans 'Page not found' %} | {{ block.super }}
+{% endblock %}
+
+{% block error_message %}{% trans "Sorry but we couldn’t find this page :(" %}{% endblock %}
+{% block error_code %}{% trans "404" %}{% endblock %}
+{% block error_help %}{% trans "It seems that this page doesn’t exist." %}{% endblock %}
+

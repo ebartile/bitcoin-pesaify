@@ -1,0 +1,61 @@
+{% load static i18n %}
+
+<nav class="header-navbar navbar-expand-md navbar navbar-with-menu navbar-without-dd-arrow fixed-top navbar-light navbar-bg-color">
+    <div class="navbar-wrapper">
+        <div class="navbar-header d-md-none">
+            <ul class="nav navbar-nav flex-row">
+                <li class="nav-item mobile-menu d-md-none mr-auto"><a class="nav-link nav-menu-main menu-toggle hidden-xs" href="#"><i class="fa fa-bars font-large-1"></i></a></li>
+                <li class="nav-item d-md-none"><a class="navbar-brand" href="https://business.pesaify.com/"><img height="60px" class="d-none d-md-block" alt="logo" src="{% static 'pesaify/images/logo.png' %}"><img height="60px" class="d-sm-block d-md-none" alt="logo sm" src="{% static 'pesaify/images/logo-sm.png' %}"></a></li>
+                <li class="nav-item d-md-none"><a class="nav-link open-navbar-container" data-toggle="collapse" data-target="#navbar-mobile"><i class="la la-ellipsis-v"></i></a></li>
+            </ul>
+        </div>
+        <div class="navbar-container">
+            <div class="collapse navbar-collapse" id="navbar-mobile">
+                <ul class="nav navbar-nav mr-auto float-left">
+                    <li class="nav-item d-none d-md-block"><a class="nav-link nav-menu-main menu-toggle hidden-xs" href="#"><i class="fa fa-bars"></i></a></li>
+                </ul>
+                <ul class="nav navbar-nav float-right">
+                    {% if request.user.is_superuser %}
+                    <li class="dropdown dropdown-notification nav-item"><a class="nav-link nav-link-label" href="{% url 'admin:index' %}"><i class="ficon icon-home"></i></a></li>
+                    {% endif %}
+                    <li class="dropdown dropdown-notification nav-item"><a class="nav-link nav-link-label" href="{% url 'pesaify-payment-tools' %}"><i class="ficon icon-wallet"></i></a></li>
+                    <li class="dropdown dropdown-user nav-item">
+                        <a class="dropdown-toggle nav-link dropdown-user-link" href="#" data-toggle="dropdown">
+                            <span class="avatar avatar-online">
+                                {% if request.user.get_photo %}
+                                <img src="{{ request.user.get_photo }}" alt="avatar">
+                                {% else %}
+                                <img src="{% static 'pesaify/avatars/avatar-1.png' %}" class="lazy" alt="avatar">
+                                {% endif %}
+                            </span>
+                            <span class="user-name text-bold-700">{{ request.user.balance }}</span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" href="#"><i class="fa fa-award"></i>{{ request.user.get_full_name }}</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="{% url 'pesaify-account' %}"><i class="fa fa-user"></i> {% trans 'Profile' %}</a>
+                            <a class="dropdown-item" href="{% url 'pesaify-payments' %}"><i class="fa fa-check-square"></i> {% trans 'Payments' %}</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="{% url 'pesaify-logout' %}"><i class="fa fa-power-off"></i> {% trans 'Logout' %}</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="main-menu menu-fixed menu-dark menu-bg-default rounded menu-accordion menu-shadow">
+    <div class="main-menu-content"><a class="navigation-brand d-none d-md-block d-lg-block d-xl-block" href="https://business.pesaify.com/"><img height="60px" class="brand-logo" alt="logo" src="{% static 'pesaify/images/logo.png' %}"/></a>
+        <ul class="navigation navigation-main" id="main-menu-navigation" data-menu="menu-navigation">
+            <li class="active"><a href="{% url 'pesaify-dashboard' %}"><i class="icon-grid"></i><span class="menu-title" data-i18n="">{% trans 'Dashboard' %}</span></a>
+            </li>
+            <li class=" nav-item"><a href="{% url 'pesaify-payments' %}"><i class="fa fa-chain"></i><span class="menu-title" data-i18n="">{% trans 'Payments' %}</span></a>
+            </li>
+            <li class=" nav-item"><a href="{% url 'pesaify-payment-tools' %}"><i class="ficon icon-wallet"></i><span class="menu-title" data-i18n="">{% trans 'Payment Tools' %}</span></a>
+            </li>
+            <li class=" nav-item"><a href="{% url 'pesaify-account' %}"><i class="icon-settings"></i><span class="menu-title" data-i18n="">{% trans 'Settings' %}</span></a>
+            </li>
+        </ul>
+    </div>
+</div>

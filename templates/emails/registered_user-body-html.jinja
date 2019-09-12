@@ -1,0 +1,34 @@
+{% extends "emails/hero-body-html.jinja" %}
+
+{% block body %}
+<table border="0" width="100%" cellpadding="0" cellspacing="0" class="table-body">
+    <tr>
+        {% trans url=resolve_url('pesaify-activate-account', activation_token) %}
+        <td>
+            <h2>Thank you for registering in Pesaify</h2>
+            <h3>We hope you enjoy it</h3>
+            <p>We built it to be beautiful, elegant, simple to use and fun - without forsaking flexibility and power.</p>
+            <p>Please click on the link below to confirm registration for your  Pesaify Account:</p>
+
+            <a class="button" href="{{ url }}">Activate Account</a>
+
+            <strong>If clicking the link above doesn't work, please copy and paste the URL in a new browser window instead.</strong>
+
+            <strong>If you've received this mail in error, it's likely that another user entered your email address by mistake.</strong>
+            <strong>If you didn't initiate the request, you don't need to take any further action and can safely disregard this email.</strong>
+
+            <small>The Pesaify Team</small>
+        </td>
+        {% endtrans %}
+    </tr>
+</table>
+{% endblock %}
+
+{% block footer %}
+    {{ super() }}
+    <br />
+    <br />
+    {% trans url=resolve_url('pesaify-cancel-account', cancel_token) %}
+    <strong>You may remove your account from this service</strong> <a href="{{ url }}" title="Remove your account" style="color: #0f68ac">clicking here</a>
+    {% endtrans %}
+{% endblock %}

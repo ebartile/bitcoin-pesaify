@@ -1,0 +1,366 @@
+{% extends 'layout.html' %}
+{% load static i18n humanize functions %}
+{% block title %}{% trans 'All Payments' %}{% endblock title %}
+
+{% block extrastyles %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+{% endblock %}
+
+
+{% block content %}
+
+    <div class="app-content content">
+      <div class="content-wrapper">
+        <div class="content-header row">
+          <div class="content-header-left col-md-8 col-12 mb-2 breadcrumb-new">
+            <h3 class="content-header-title mb-0 d-inline-block">{% trans 'Payments' %}</h3>
+            <div class="row breadcrumbs-top d-inline-block">
+              <div class="breadcrumb-wrapper col-12">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="{% url 'pesaify-dashboard' %}">{% trans 'Dashboard' %}</a>
+                  </li>
+                  <li class="breadcrumb-item active">{% trans 'Payments' %}
+                  </li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="content-body">
+            {% if not request.user.dismiss_message and request.user.message %}
+            <div class="alert alert-dismissable alert-success">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true" id="dismiss">&times;</button>
+                {{ request.user.message|safe }}
+            </div>
+            {% endif %}
+            <div class="row">
+                <div class="col-12  order-2">
+                    <section>
+                        <div class="container">
+
+                            <div class="row">
+                                <div class="col-lg-12 text-center">
+                                    <h2 class="section-heading">Invoices</h2>
+                                    <hr class="primary">
+                                </div>
+                            </div>
+
+                            <div class="row no-gutter" style="margin-bottom: 5px;">
+                                <div class="col-lg-6">
+                                    <a class="btn btn-primary" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Export <i class="fa fa-bars"></i>
+                                    </a>
+
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                        <a class="dropdown-item export-link" target="_blank" href="{% url 'invoice-list' %}?format=txt">TXT</a>
+                                        <a class="dropdown-item export-link" target="_blank" href="{% url 'invoice-list' %}?format=xls">XLS</a>
+                                        <a class="dropdown-item export-link" target="_blank" href="{% url 'invoice-list' %}?format=xlsx">XLXS</a>
+                                        <a class="dropdown-item export-link" target="_blank" href="{% url 'invoice-list' %}?format=csv">CSV</a>
+                                        <a class="dropdown-item export-link" target="_blank" href="{% url 'invoice-list' %}?format=json">JSON</a>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <form method="get" style="float:right;" action="">
+                                            <div class="input-group">
+                                                <input class="form-control" style="width:300px;" type="text" id="uuid" name="uuid" placeholder="Search an invoice ID" value="{{ request.GET.uuid }}"/>
+                                                <div class="input-group-append">
+                                                    <button type="submit" class="btn btn-primary" title="Search invoice">
+                                                        <span class="fa fa-search"></span> Search
+                                                    </button>
+                                                    <button type="button" class="btn btn-primary dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                        <span class="sr-only">Toggle Dropdown</span>
+                                                        <i class="fa fa-bars"></i>
+                                                    </button>
+                                                    <div class="dropdown-menu dropdown-menu-right">
+                                                        <a class="dropdown-item" href="{% url 'pesaify-payments' %}?status=invalid">Invalid Invoices</a>
+                                                        <a class="dropdown-item" href="{% url 'pesaify-payments' %}?status=paid,confirmed,complete">Paid Invoices</a>
+                                                        <a class="dropdown-item" href="{% url 'pesaify-payments' %}?status=paidLate">Paid Late Invoices</a>
+                                                        <a class="dropdown-item" href="{% url 'pesaify-payments' %}?status=paidPartial">Paid Partial Invoices</a>
+                                                        <a class="dropdown-item" href="{% url 'pesaify-payments' %}?status=paidOver">Paid Over Invoices</a>
+                                                        <div role="separator" class="dropdown-divider"></div>
+                                                        <a class="dropdown-item last24" href="{% url 'pesaify-payments' %}?startDate={{ 1|subtractdays|date:"Y-m-d" }}">Last 24 hours</a>
+                                                        <a class="dropdown-item last72" href="{% url 'pesaify-payments' %}?startDate={{ 3|subtractdays|date:"Y-m-d" }}">Last 3 days</a>
+                                                        <a class="dropdown-item last168" href="{% url 'pesaify-payments' %}?startDate={{ 7|subtractdays|date:"Y-m-d" }}">Last 7 days</a>
+                                                        <button type="button" class="dropdown-item" data-toggle="modal" data-target="#customRangeModal" data-backdrop="static">Custom Range</button>
+                                                        <div role="separator" class="dropdown-divider"></div>
+                                                        <a class="dropdown-item" href="{% url 'pesaify-payments' %}">Unfiltered</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <span class="text-danger field-validation-valid" data-valmsg-for="SearchTerm" data-valmsg-replace="true"></span>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="modal fade" id="customRangeModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 550px;">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLongTitle">Filter invoices by Custom Range</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="form-group row">
+                                                <label for="staticEmail" class="col-sm-3 col-form-label">Start Date</label>
+                                                <div class="col-sm-9">
+                                                    <div class="input-group">
+                                                        <input id="dtpStartDate" class="form-control flatdtpicker" type="datetime-local"
+                                                            placeholder="Start Date" />
+                                                        <div class="input-group-append">
+                                                            <button type="button" class="btn btn-primary input-group-clear" title="Clear">
+                                                                <span class=" fa fa-times"></span>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label class="col-sm-3 col-form-label">End Date</label>
+                                                <div class="col-sm-9">
+                                                    <div class="input-group">
+                                                        <input id="dtpEndDate" class="form-control flatdtpicker" type="datetime-local"
+                                                            data-fdtp='{ "enableTime": true, "enableSeconds": true, "dateFormat": "Y-m-d H:i:S", "time_24hr": true, "defaultHour": 0 }'
+                                                            placeholder="End Date" />
+                                                        <div class="input-group-append">
+                                                            <button type="button" class="btn btn-primary input-group-clear" title="Clear">
+                                                                <span class=" fa fa-times"></span>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button id="btnCustomRangeDate" type="button" class="btn btn-primary">Filter</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <table class="table table-sm table-responsive-md">
+                                    <thead>
+                                        <tr>
+                                            <th style="min-width: 90px;" class="col-md-auto">
+                                                Date
+                                                <a href="#" class="switchTime">
+                                                    <span class="fa fa-clock-o" title="Switch date format"></span>
+                                                </a>
+                                            </th>
+                                            <th style="max-width: 180px;">OrderId</th>
+                                            <th>InvoiceId</th>
+                                            <th style="min-width: 150px;">Type</th>
+                                            <th style="min-width: 150px;">Status</th>
+                                            <th style="text-align:right">Amount</th>
+                                            <th style="text-align:right">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for invoice in invoices %}
+                                        <tr>
+                                            <td>
+                                                <span class="switchTimeFormat" data-switch="{{ invoice.current_time }}">
+                                                    {{ invoice.current_time|naturaltime }}
+                                                </span>
+                                            </td>
+                                            <td style="max-width: 180px;">
+                                                <span>{{ invoice.extra.orderId }}</span>
+                                            </td>
+                                            <td>{{ invoice.extra.id }}</td>
+                                            <td>{{ invoice.content_type }}</td>
+                                            <td>
+                                                <span class="pavpill pavpil-{{ invoice.extra.status }} {% if invoice.extra.status == "new" %}success{% endif %}">{{ invoice.extra.status }}</span>
+                                            </td>
+                                            <td style="text-align:right">{{ invoice.extra.currency }}{{ invoice.extra.price|floatformat:7 }}</td>
+                                            <td style="text-align:right">
+                                                {% if invoice.extra.status == "new" %}
+                                                <span>
+                                                    <a href="{{ invoice.extra.url }}">Checkout</a>
+                                                </span>
+                                                {% endif %}
+                                                &nbsp;
+                                                <a href="{% url 'pesaify-invoice' invoice.extra.id %}">Details</a>
+                                                &nbsp;
+                                                <a href="javascript:void(0);" data-id='{{ invoice.extra.id }}' class="dropper">
+                                                    <span title="Invoice Details Toggle" class="fa fa-1x fa-angle-double-down"></span>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        <tr id="invoice_{{ invoice.extra.id }}" style="display:none;">
+                                            <td colspan="99">
+                                                <div style="margin-left: 15px; margin-bottom: 0px;">
+                                                    <div class="row">
+                                                        <div class="col-md-12 invoice-payments">
+                                                            <h3>Paid summary</h3>
+                                                            <table class="table table-sm table-responsive-md">
+                                                                <thead class="thead-inverse">
+                                                                    <tr>
+                                                                        <th>Payment method</th>
+                                                                        <th>Address</th>
+                                                                        <th class="text-right">Rate</th>
+                                                                        <th class="text-right">Paid</th>
+                                                                        <th class="text-right">Due</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                        <tr>
+                                                                            <td>BTC</td>
+                                                                            <td title="{{ invoice.extra.bitcoinAddress }}">
+                                                                                <span  class="text-truncate d-block" style="max-width: 400px">{{ invoice.extra.bitcoinAddress }}</span>
+                                                                            </td>
+                                                                            <td class="text-right">{{ invoice.extra.currency }}{{ invoice.extra.rate|intcomma }}</td>
+                                                                            <td class="text-right">{{ invoice.extra.btcPaid|floatformat:7 }} BTC</td>
+                                                                            <td class="text-right">{{ invoice.extra.btcDue|floatformat:7 }} BTC</td>
+                                                                        </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            {% if invoices.count == 0 %}
+                                <div class="tab-content" id="v-tabContent">
+                                    <div class="tab-pane fade active show" id="v-all" role="tabpanel" aria-labelledby="v-all-tab">
+                                        <div class="card-content collapse show">
+                                            <div class="text-center card-body">
+                                                <h2>{% trans "No Payments Yet"%}</h2>
+                                                <div class="row clearfix mb-2">
+                                                    <div class="col-12">
+                                                        <img class="verify-image" src="{% static 'pesaify/images/no-payments.svg' %}" width="105px" height="105px" alt="">
+                                                    </div>
+                                                </div>
+                                                <p class="mt-2">{% trans " You haven't created an invoice yet. Please use one of our integrations or payment tools to collect payments. " %}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                            {% if invoices %}
+                            <div class="col-12 text-center">
+                                <nav aria-label="Page navigation">
+                                    <ul class="pagination justify-content-center pagination-separate pagination-flat">
+                                        {% if invoices.has_previous %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page={{ invoices.previous_page_number }}{% if request.GET.startDate %}&startDate={{ request.GET.startDate }}{% endif %}{% if request.GET.endDate %}&endDate={{ request.GET.endDate }}{% endif %}" aria-label="{% trans "Previous" %}">
+                                                <span aria-hidden="true">« {% trans 'Prev' %}</span>
+                                                <span class="sr-only">{% trans 'Previous' %}</span>
+                                            </a>
+                                        </li>
+                                        {% else %}
+                                        <li class="page-item">
+                                            <a class="page-link disabled" href="#" aria-label="{% trans "Previous" %}">
+                                                <span aria-hidden="true">« {% trans 'Prev' %}</span>
+                                                <span class="sr-only">{% trans 'Previous' %}</span>
+                                            </a>
+                                        </li>
+                                        {% endif %}
+                                        {% for i in invoices.paginator.page_range %}
+                                            <li class="{% if invoices.number == i %}active {% endif %} page-item">
+                                                <a href="?page={{ i }}{% if request.GET.startDate %}&startDate={{ request.GET.startDate }}{% endif %}{% if request.GET.endDate %}&endDate={{ request.GET.endDate }}{% endif %}" class="page-link">{{ i }}</a>
+                                            </li>
+                                        {% endfor %}
+
+                                        {% if invoices.has_next %}
+                                            <li class="page-item">
+                                                <a class="page-link" href="?page={{ invoices.next_page_number }}{% if request.GET.startDate %}&startDate={{ request.GET.startDate }}{% endif %}{% if request.GET.endDate %}&endDate={{ request.GET.endDate }}{% endif %}" aria-label="{% trans "Next" %}">
+                                                    <span aria-hidden="true">{% trans 'Next' %} »</span>
+                                                    <span class="sr-only">{% trans 'Next' %}</span>
+                                                </a>
+                                            </li>
+                                        {% else %}
+                                            <li class="page-item disabled">
+                                                <a class="page-link" href="#" aria-label="{% trans "Next" %}">
+                                                    <span aria-hidden="true">{% trans 'Next' %} »</span>
+                                                    <span class="sr-only">{% trans 'Next' %}</span>
+                                                </a>
+                                            </li>
+                                        {% endif %}
+
+                                    </ul>
+                                </nav>
+                            </div>
+                            {% endif %}
+
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block scripts %}
+    {{ block.super }}
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+{% endblock %}
+
+{% block onbodyload %}
+    {{ block.super }}
+    $(".switchTime").on('click', function(){
+        $(".switchTimeFormat").each(function(){var n=$(this).html(),t=$(this).attr("data-switch");$(this).html(t);$(this).attr("data-switch",n)});
+    });
+    $('#btnCustomRangeDate').on('click', function (sender) {
+        var filterString = "";
+
+        var dtpStartDate = $("#dtpStartDate").val();
+        if (dtpStartDate !== null && dtpStartDate !== "") {
+            filterString = "startDate=" + dtpStartDate;
+        }
+
+        var dtpEndDate = $("#dtpEndDate").val();
+        if (dtpEndDate !== null && dtpEndDate !== "") {
+            filterString += "&endDate=" + dtpEndDate;
+        }
+
+        if (filterString !== "") {
+            var redirectUri = "{% url 'pesaify-payments' %}?" + filterString
+            window.location.href = redirectUri;
+        } else {
+            $("#dtpStartDate").next().trigger("focus");
+        }
+    })
+
+    $(function () {
+        var timezoneOffset = new Date().getTimezoneOffset();
+        $("#TimezoneOffset").val(timezoneOffset);
+        $(".export-link, a.dropdown-item").each(function () {
+            this.href = this.href.replace("timezoneoffset=0", "timezoneoffset=" + timezoneOffset);
+        });
+
+        $("a.last24").each(function () { this.href = this.href.replace("last24", getDateStringWithOffset(24)); });
+        $("a.last72").each(function () { this.href = this.href.replace("last72", getDateStringWithOffset(72)); });
+        $("a.last168").each(function () { this.href = this.href.replace("last168", getDateStringWithOffset(168)); });
+    });
+
+    function getDateStringWithOffset(hoursDiff) {
+        var datenow = new Date();
+        var newDate = new Date(datenow.getTime() - (hoursDiff * 60 * 60 * 1000));
+        var str = newDate.toLocaleDateString() + " " + newDate.toLocaleTimeString();
+        return str;
+    }
+
+    $('.dropper').on('click', function(){
+
+        $("#invoice_" + $(this).attr('data-id')).toggle(0, function () {
+            var detailsRow = $(this);
+            var btnToggle = $(this).children().first();
+            if (detailsRow.is(':visible')) {
+                btnToggle.removeClass('fa-angle-double-down').addClass('fa-angle-double-up');
+            } else {
+                btnToggle.removeClass('fa-angle-double-up').addClass('fa-angle-double-down');
+            }
+        });
+    });
+    $('.flatdtpicker').flatpickr({ "enableTime": true, "enableSeconds": true, "dateFormat": "Y-m-d", "time_24hr": true, "defaultHour": 0 });
+{% endblock %}

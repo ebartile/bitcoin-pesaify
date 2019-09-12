@@ -1,0 +1,232 @@
+{% extends 'layout.html' %}
+{% load static i18n %}
+{% block title %}{% trans 'Get Started' %}{% endblock title %}
+
+{% block extrastyles %}
+{% endblock %}
+
+{% block content %}
+
+<div class="app-content content">
+    <div class="content-wrapper">
+        <div class="content-body">
+            {% if not request.user.dismiss_message and request.user.message %}
+            <div class="alert alert-dismissable alert-success">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true" id="dismiss">&times;</button>
+                {{ request.user.message|safe }}
+            </div>
+            {% endif %}
+            <div class="row">
+                <div class="col-12 col-md-8 offset-md-2">
+                    <section class="">
+                        <div class="card-content">
+                            <div class="card-body">
+                                <div class="col-12">
+                                    <div class="row">
+                                        <div class="col-md-12 col-12">
+                                            <div class="row">
+                                                <div class="col-12 text-center">
+                                                    {% if request.user.is_email_verified  and request.user.business.tier0 == '3' and request.user.mobilemoneysettlementverified.count > 0 or request.user.cryptosettlementverified.count > 0 or request.user.banksettlementverified.count > 0 %}
+                                                        <p class="text-bold-700 text-uppercase mb-0">{% trans ' All Steps Complete! ' %}{{ request.user.get_full_name }}!</p>
+                                                        <p class="text-bold-200 mb-0">{% trans " You're ready to accept cryptocurrency! " %}</p>
+                                                    {% else %}
+                                                    <p class="text-bold-700 text-uppercase mb-0">{% trans 'Welcome to Pesaify, ' %}{{ request.user.get_full_name }}!</p>
+                                                    <p class="text-bold-200 mb-0">{% trans "To get started, complete the items below.<br> You're 3 steps away from accepting cryptocurrency!" %}</p>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                            <hr/>
+                                            <div class="transactions-table-tbody">
+                                                <section class="card pull-up">
+                                                    <div class="card-content">
+                                                        <div class="card-body">
+                                                            <div class="col-12">
+                                                                <div class="row">
+                                                                    <div class="col-12 col-sm-2 py-1">
+                                                                        {% if request.user.is_email_verified %}
+                                                                        <img src="{% static 'pesaify/images/envelope-tick.svg' %}" height="70px"/>
+                                                                        {% else %}
+                                                                        <img src="{% static 'pesaify/images/envelope.svg' %}" height="70px"/>
+                                                                        {% endif %}
+                                                                    </div>
+                                                                    <div class="col-12 col-sm-10 py-1 {% if request.user.is_email_verified %}text-success{% endif %}">
+                                                                        <h4 class="text-bold-700 text-uppercase mb-0 {% if request.user.is_email_verified %}text-success{% endif %}">{% trans 'Confirm Your Email' %}</h4>
+                                                                        {% if request.user.is_email_verified %}
+                                                                        <p class="text-bold-200 mb-0">{% trans 'Nice! Your email address has been confirmed.' %}</p>
+                                                                        {% else %}
+                                                                        <p class="text-bold-200 mb-0">{% trans 'Please click the link we sent to ' %}<a href="#">{{ request.user.email }}</a></p>
+                                                                        <p class="text-bold-200 mb-0"><a href="{% url 'pesaify-account-update-email-address' %}">{% trans 'Resend or change address' %}</a></p>
+                                                                        {% endif %}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </section>
+                                                {% if request.user.business.tier0 == '3' %}
+                                                <section class="card pull-up">
+                                                    <div class="card-content">
+                                                        <div class="card-body">
+                                                            <div class="col-12">
+                                                                <div class="row">
+                                                                    <div class="col-12 col-sm-2 py-1">
+                                                                        <img src="{% static 'pesaify/images/stamp-tick.svg' %}" height="70px"/>
+                                                                    </div>
+                                                                    <div class="col-12 col-sm-10 py-1 text-success">
+                                                                        <h4 class="text-bold-700 text-uppercase mb-0 text-success">{% trans 'Get Verified' %}</h4>
+                                                                        <p class="text-bold-200 mb-0">{% trans 'Great! Your business has been verified.' %}</p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </section>
+                                                {% elif request.user.business.tier0 == '1' or request.user.business.tier0 == '4' %}
+                                                <section class="card pull-up">
+                                                    <a href="{% url 'pesaify-account-verification-step-one' %}">
+                                                        <div class="card-content">
+                                                            <div class="card-body">
+                                                                <div class="col-12">
+                                                                    <div class="row">
+                                                                        <div class="col-12 col-sm-2 py-1">
+                                                                            <img src="{% static 'pesaify/images/stamp-pending-tick.svg' %}" height="70px"/>
+                                                                        </div>
+                                                                        <div class="col-12 col-sm-10 py-1">
+                                                                            <h4 class="text-bold-700 text-uppercase mb-0 text-warning">{% trans 'Get Verified' %}&nbsp;›</h4>
+                                                                            <p class="text-bold-200 mb-0 text-warning">{% trans "Great! We're reviewing your verification information and will get back to you shortly." %}</p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </a>
+                                                </section>
+                                                {% else %}
+                                                <section class="card pull-up">
+                                                    <a href="{% url 'pesaify-account-verification-step-one' %}">
+                                                        <div class="card-content">
+                                                            <div class="card-body">
+                                                                <div class="col-12">
+                                                                    <div class="row">
+                                                                        <div class="col-12 col-sm-2 py-1">
+                                                                            <img src="{% static 'pesaify/images/stamp.svg' %}" height="70px"/>
+                                                                        </div>
+                                                                        <div class="col-12 col-sm-10 py-1">
+                                                                            <h4 class="text-bold-700 text-uppercase mb-0">{% trans 'Get Verified' %}&nbsp;›</h4>
+                                                                            <p class="text-bold-200 mb-0">{% trans 'Verify your business for basic payment processing. ' %}</p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </a>
+                                                </section>
+                                                {% endif %}
+                                                {% if request.user.mobilemoneysettlementverified.count > 0 or request.user.cryptosettlementverified.count > 0 or request.user.banksettlementverified.count > 0 %}
+                                                <section class="card pull-up">
+                                                    <a href="{% url 'pesaify-account-settlement' %}">
+                                                        <div class="card-content">
+                                                            <div class="card-body">
+                                                                <div class="col-12">
+                                                                    <div class="row">
+                                                                        <div class="col-12 col-sm-2 py-1">
+                                                                            <img src="{% static 'pesaify/images/bank-tick.svg' %}" height="70px"/>
+                                                                        </div>
+                                                                        <div class="col-12 col-sm-10 py-1 text-success">
+                                                                            <h4 class="text-bold-700 text-uppercase mb-0 text-success">{% trans 'Add Settlement Information' %}</h4>
+                                                                            <p class="text-bold-200 mb-0">{% trans 'Fantastic! Your bank settlement has been verified.' %}</p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </a>
+                                                </section>
+                                                {% elif request.user.mobilemoneysettlementpending.count > 0 or request.user.cryptosettlementpending.count > 0 or request.user.banksettlementpending.count > 0 %}
+                                                <section class="card pull-up">
+                                                    <a href="{% url 'pesaify-account-settlement' %}">
+                                                        <div class="card-content">
+                                                            <div class="card-body">
+                                                                <div class="col-12">
+                                                                    <div class="row">
+                                                                        <div class="col-12 col-sm-2 py-1">
+                                                                            <img src="{% static 'pesaify/images/bank-pending-tick.svg' %}" height="70px"/>
+                                                                        </div>
+                                                                        <div class="col-12 col-sm-10 py-1">
+                                                                            <h4 class="text-bold-700 text-uppercase mb-0 text-warning">{% trans 'Add Settlement Information' %}&nbsp;›</h4>
+                                                                            <p class="text-bold-200 mb-0 text-warning">{% trans "You've got unconfirmed settlement changes. Please click the link we sent to ebartile@gmail.com. This link is only valid for 10 minutes. " %}</p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </a>
+                                                </section>
+                                                {% elif request.user.mobilemoneysettlementreview.count > 0 or request.user.cryptosettlementreview.count > 0 or request.user.banksettlementreview.count > 0 or request.user.banksettlementreview.count > 0 %}
+                                                <section class="card pull-up">
+                                                    <a href="{% url 'pesaify-account-settlement' %}">
+                                                        <div class="card-content">
+                                                            <div class="card-body">
+                                                                <div class="col-12">
+                                                                    <div class="row">
+                                                                        <div class="col-12 col-sm-2 py-1">
+                                                                            <img src="{% static 'pesaify/images/bank-review.svg' %}" height="70px"/>
+                                                                        </div>
+                                                                        <div class="col-12 col-sm-10 py-1">
+                                                                            <h4 class="text-bold-700 text-uppercase mb-0 text-info">{% trans 'Add Settlement Information' %}&nbsp;›</h4>
+                                                                            <p class="text-bold-200 mb-0 text-info">{% trans "You've settlement are under review. If you don't get a confirmation immediately, it will take less than 24 hours to verify details. " %}</p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </a>
+                                                </section>
+                                                {% else %}
+                                                <section class="card pull-up">
+                                                    <a href="{% url 'pesaify-account-settlement' %}">
+                                                        <div class="card-content">
+                                                            <div class="card-body">
+                                                                <div class="col-12">
+                                                                    <div class="row">
+                                                                        <div class="col-12 col-sm-2 py-1">
+                                                                            <img src="{% static 'pesaify/images/bank.svg' %}" height="70px"/>
+                                                                        </div>
+                                                                        <div class="col-12 col-sm-10 py-1">
+                                                                            <h4 class="text-bold-700 text-uppercase mb-0">{% trans 'Add Settlement Information' %}&nbsp;›</h4>
+                                                                            <p class="text-bold-200 mb-0">{% trans 'Add a bank account or cryptocurrency address to receive settlement for payments.' %}</p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </a>
+                                                </section>
+                                                {% endif %}
+                                                {% if request.user.is_email_verified  and request.user.business.tier0 == '3' and request.user.mobilemoneysettlementverified.count > 0 or request.user.cryptosettlementverified.count > 0 or request.user.banksettlementverified.count > 0 %}
+                                                    <a href="{% url 'pesaify-dashboard-setup' %}" class="btn btn-outline-success btn-block">{% trans 'Next' %}</a>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+
+{% endblock %}
+
+
+{% block scripts %}
+    {{ block.super }}
+{% endblock %}
+
+{% block onbodyload %}
+    {{ block.super }}
+
+{% endblock %}

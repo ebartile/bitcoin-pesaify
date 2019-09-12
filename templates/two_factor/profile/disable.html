@@ -1,0 +1,55 @@
+{% extends "layout.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="app-content content">
+    <div class="content-wrapper">
+        <div class="content-header row">
+            <div class="content-header-left col-md-8 col-12 mb-2 breadcrumb-new">
+                <h3 class="content-header-title mb-0 d-inline-block">{% trans 'Two Factor' %}</h3>
+                <div class="row breadcrumbs-top d-inline-block">
+                    <div class="breadcrumb-wrapper col-12">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'pesaify-dashboard' %}">{% trans 'Dashboard' %}</a>
+                            </li>
+                            <li class="breadcrumb-item"><a href="{% url 'pesaify-account' %}">{% trans 'Account' %}</a>
+                            </li>
+                            <li class="breadcrumb-item"><a href="{% url 'two_factor:profile' %}">{% trans 'Two Factor' %}</a>
+                            </li>
+                            <li class="breadcrumb-item active">{% trans 'Disable' %}
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="content-body">
+            {% if not request.user.dismiss_message and request.user.message %}
+            <div class="alert alert-dismissable alert-success">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true" id="dismiss">&times;</button>
+                {{ request.user.message|safe }}
+            </div>
+            {% endif %}
+            <div class="row">
+              <div class="col-12 col-md-12">
+                  <div class="">
+                      <div class="card-content collapse show">
+                          <div class="card-body">
+                            <h1>{% block title %}{% trans "Disable Two-factor Authentication" %}{% endblock %}</h1>
+                            <p>{% blocktrans %}You are about to disable two-factor authentication. This
+                                weakens your account security, are you sure?{% endblocktrans %}</p>
+                            <form method="post">
+                                {% csrf_token %}
+                                <table>{{ form }}</table>
+                                <button class="btn btn-danger"
+                                        type="submit">{% trans "Disable" %}</button>
+                            </form>
+                          </div>
+                      </div>
+                  </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

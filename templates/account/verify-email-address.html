@@ -1,0 +1,105 @@
+{% extends 'layout.html' %}
+{% load static i18n %}
+{% block title %}{% trans 'Verify Email' %}{% endblock title %}
+
+{% block extrastyles %}
+{% endblock %}
+
+
+{% block layout %}
+
+<nav class="header-navbar navbar-expand-md navbar navbar-with-menu navbar-without-dd-arrow fixed-top navbar-light navbar-bg-color">
+    <div class="navbar-wrapper">
+        <div class="navbar-header d-md-none">
+            <ul class="nav navbar-nav flex-row">
+                <li class="nav-item mobile-menu d-md-none mr-auto"><a class="nav-link nav-menu-main menu-toggle hidden-xs" href="#"><i class="fa fa-bars font-large-1"></i></a></li>
+                <li class="nav-item d-md-none"><a class="navbar-brand" href="https://pesaify.com/"><img height="60px" class="d-none d-md-block" alt="logo" src="{% static 'pesaify/images/logo.png' %}"><img height="60px" class="d-sm-block d-md-none" alt="logo sm" src="{% static 'pesaify/images/logo-sm.png' %}"></a></li>
+                <li class="nav-item d-md-none"><a class="nav-link open-navbar-container" data-toggle="collapse" data-target="#navbar-mobile"><i class="la la-ellipsis-v"></i></a></li>
+            </ul>
+        </div>
+        <div class="navbar-container">
+            <div class="collapse navbar-collapse" id="navbar-mobile">
+                <ul class="nav navbar-nav mr-auto float-left">
+                    <li class="nav-item d-none d-md-block"><a class="navbar-brand" href="https://pesaify.com/"><img height="60px" class="d-none d-md-block" alt="logo" src="{% static 'pesaify/images/logo-sm.png' %}"><img height="60px" class="d-sm-block d-md-none" alt="logo sm" src="{% static 'pesaify/images/logo-sm.png' %}"></a></li>
+                </ul>
+                <ul class="nav navbar-nav float-right">
+                    <li class="dropdown dropdown-notification nav-item"><a class="nav-link nav-link-label" href="https://pesaify.com/help/">Help</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="app-content content">
+    <div class="content-wrapper">
+        <div class="content-header row">
+            <div class="content-header-left col-md-8 col-12 mb-2 breadcrumb-new">
+                <h3 class="content-header-title mb-0 d-inline-block">Email Verify</h3>
+                <div class="row breadcrumbs-top d-inline-block">
+                    <div class="breadcrumb-wrapper col-12">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="https://pesaify.com/">Home</a>
+                            </li>
+                            <li class="breadcrumb-item active">Email Verification
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="content-body">
+            {% if not request.user.dismiss_message and request.user.message %}
+            <div class="alert alert-dismissable alert-success">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true" id="dismiss">&times;</button>
+                {{ request.user.message|safe }}
+            </div>
+            {% endif %}
+            <div class="row">
+                <div class="col-12 col-md-5 offset-md-3">
+                    <div class="card">
+                        <div class="card-content collapse show">
+                            <div class="card-body">
+                                <div class="text-center row clearfix mb-2">
+                                    <div class="col-12">
+                                        <img class="verify-image" src="{% static 'pesaify/images/loading.gif' %}" width="75px" height="75px" alt="">
+                                    </div>
+                                </div>
+                                <p class="text-center message">{% trans 'Please wait while we verify your email.Verifying Email.' %}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+
+    {% include "partials/footer.html" %}
+
+{% endblock %}
+
+
+{% block scripts %}
+    {{ block.super }}
+{% endblock %}
+
+{% block onbodyload %}
+    {{ block.super }}
+    $.ajax({
+        url: '{% url "users-change-email" %}',
+        type: 'POST',
+        data: {'email_token': '{{ email_token }}' },
+        success: function(jqXHR, textStatus, errorThrown){
+            $(".verify-image").attr('src', '{% static "pesaify/icons/email-success.svg" %}')
+            $(".message").attr("class", "text-center message text-success");
+            $(".message").html("Email Verified Successfully!");
+            window.location = '{% url "pesaify-dashboard" %}'
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            $(".verify-image").attr('src', '{% static "pesaify/icons/high_priority.svg" %}')
+            $(".message").attr("class", "text-center message error");
+            $(".message").html(jqXHR.responseJSON['detail']);
+        },
+    });
+
+{% endblock %}

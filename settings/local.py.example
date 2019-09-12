@@ -1,0 +1,117 @@
+# -*- coding: utf-8 -*-
+
+from decouple import config, Csv
+from .development import *
+
+#########################################
+## GENERIC
+#########################################
+
+ADMINS = (
+   ("administrator", "admin@pesaify.com"),
+   ("emmanuel bartile", "emmanuelbartile@gmail.com"),
+)
+
+DATABASES = {
+   'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': config('DB_NAME'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': config('DB_HOST'),
+        'PORT': config('DB_PORT'),
+   }
+}
+
+STATICFILES_STORAGE = 'pesaify.base.storage.StaticStorage'
+DEFAULT_FILE_STORAGE = 'pesaify.base.storage.PublicMediaStorage'
+PRIVATE_FILE_STORAGE = 'pesaify.base.storage.PrivateMediaStorage'
+AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME')
+AWS_S3_ENDPOINT_URL = 'https://sgp1.digitaloceanspaces.com'
+AWS_DEFAULT_ACL = 'public-read'
+AWS_S3_OBJECT_PARAMETERS = {
+    'CacheControl': 'max-age=86400',
+}
+AWS_LOCATION = config('AWS_LOCATION')
+AWS_STATIC_LOCATION = '%s%s' % (AWS_LOCATION, '/static/')
+AWS_PUBLIC_MEDIA_LOCATION = '%s%s' % (AWS_LOCATION, '/media/public/')
+AWS_PRIVATE_MEDIA_LOCATION = '%s%s' % (AWS_LOCATION, '/media/private/')
+MEDIA_URL = '%s/%s/' % (AWS_S3_ENDPOINT_URL, AWS_PUBLIC_MEDIA_LOCATION)
+STATIC_URL = "%s/%s/" % (AWS_S3_ENDPOINT_URL, AWS_STATIC_LOCATION)
+
+EVENTS_PUSH_BACKEND = "pesaify.events.backends.rabbitmq.EventsPushBackend"
+EVENTS_PUSH_BACKEND_OPTIONS = {"url": "amqp://guest:guest@localhost:5672//"}
+
+#########################################
+## THROTTLING
+#########################################
+
+REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"] = {
+   "anon-write": None,
+   "user-write": None,
+   "anon-read": None,
+   "user-read": None,
+   "login-fail": None,
+   "register-fail": None,
+   "user-detail": None,
+   "user-update": None,
+}
+
+# This list should containt:
+#  - Valid clients IP addresses (X-Forwarded-For header)
+REST_FRAMEWORK["DEFAULT_THROTTLE_WHITELIST"] = []
+
+#########################################
+## MAIL SYSTEM SETTINGS
+#########################################
+
+DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL')
+
+# EMAIL SETTINGS EXAMPLE
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = config('EMAIL_HOST')
+EMAIL_PORT = config('EMAIL_PORT', cast=int)
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+EMAIL_USE_SSL = config('EMAIL_USE_SSL', cast=bool)
+
+
+#########################################
+## REGISTRATION
+#########################################
+
+PUBLIC_REGISTER_ENABLED = True
+
+# LIMIT ALLOWED DOMAINS FOR REGISTER AND INVITE
+# None or [] values in USER_EMAIL_ALLOWED_DOMAINS means allow any domain
+USER_EMAIL_ALLOWED_DOMAINS = None
+
+#########################################
+## SITEMAP
+#########################################
+
+# If is True /front/sitemap.xml show a valid sitemap of pesaify-front client
+FRONT_SITEMAP_ENABLED = True
+FRONT_SITEMAP_CACHE_TIMEOUT = 24*60*60  # In second
+
+#CACHES = {
+#    'default': {
+#        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+#        'LOCATION': '127.0.0.1:11211',
+#    }
+#}
+
+SITES = {
+    "front": {
+       "scheme": "https",
+       "domain": "business.pesaify.com",
+       "name": "front"
+    },
+}
+
+SITE_ID = "front"
+
+with open('private_key.pem', mode='rb') as private_file:
+    PRIVKEY = private_file.read()

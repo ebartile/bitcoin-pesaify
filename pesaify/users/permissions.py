@@ -1,0 +1,55 @@
+from pesaify.base.permissions import (AppResourcePermission,IsSuperUser,AllowAny,IsAuthenticated,PermissionComponent, IsAnonymous, IsTheSameUser, IsObjectOwner)
+
+class UserPermission(AppResourcePermission):
+    enought_perms = IsSuperUser()
+    global_perms = None
+    create_perms = IsAnonymous()
+    retrieve_perms = AllowAny()
+    update_perms = IsTheSameUser()
+    partial_update_perms = IsTheSameUser()
+    resend_change_email_perms = IsAuthenticated()
+    destroy_perms = IsTheSameUser()
+    list_perms = AllowAny()
+    password_recovery_perms = AllowAny()
+    change_password_from_recovery_perms = AllowAny()
+    change_password_perms = IsAuthenticated()
+    generate_token_perms = IsAuthenticated()
+    change_avatar_perms = IsAuthenticated()
+    change_passport_perms = IsAuthenticated()
+    change_permit_id_front_perms = IsAuthenticated()
+    change_permit_id_back_perms = IsAuthenticated()
+    change_avatar_recording_perms = IsAuthenticated()
+    change_passport_recording_perms = IsAuthenticated()
+    change_permit_recording_id_front_perms = IsAuthenticated()
+    change_permit_recording_id_back_perms = IsAuthenticated()
+    me_perms = IsAuthenticated()
+    remove_avatar_perms = IsAuthenticated()
+    remove_passport_perms = IsAuthenticated()
+    remove_permit_id_front_perms = IsAuthenticated()
+    remove_permit_id_back_perms = IsAuthenticated()
+    remove_avatar_recording_perms = IsAuthenticated()
+    remove_passport_recording_perms = IsAuthenticated()
+    remove_permit_id_front_recording_perms = IsAuthenticated()
+    remove_permit_id_back_recording_perms = IsAuthenticated()
+    change_email_perms = AllowAny()
+    cancel_perms = AllowAny()
+
+class BusinessPermission(AppResourcePermission):
+    enought_perms = IsSuperUser()
+    global_perms = None
+    retrieve_perms = IsObjectOwner()
+    update_perms = IsObjectOwner()
+    partial_update_perms = IsObjectOwner()
+
+class SettlementPermission(AppResourcePermission):
+    enought_perms = IsSuperUser()
+    global_perms = None
+    create_perms = IsAuthenticated()
+    retrieve_perms = IsObjectOwner()
+    update_perms = IsObjectOwner()
+    partial_update_perms = IsObjectOwner()
+    destroy_perms = IsObjectOwner()
+    list_perms = IsObjectOwner()
+    activate_perms = AllowAny()
+    resend_perms = IsObjectOwner()
+

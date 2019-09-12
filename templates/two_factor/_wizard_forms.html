@@ -1,0 +1,45 @@
+{% if messages %}
+  {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-dismissable">
+      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+      {{ message }}
+    </div>
+  {% endfor %}
+{% endif %}
+{% if form.non_field_errors %}
+  {% for error in form.non_field_errors %}
+    <div class="alert alert-danger alert-dismissable">
+      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+      {{ error }}
+    </div>
+  {% endfor %}
+{% endif %}
+
+  {% for field in wizard.management_form.hidden_fields %}
+  {{ field }}
+  {% endfor %}
+  {% for field in wizard.management_form.visible_fields %}
+    <fieldset class="form-label-group">
+        {{ field }}
+        <label for="{{ field.id }}">{{ field.label }}</label>
+        {% for error in field.errors %}
+          <span class="error">{{ error }}</span>
+        {% endfor %}
+    </fieldset>
+  {% endfor %}
+
+
+  {% for field in wizard.form.hidden_fields %}
+  {{ field }}
+  {% endfor %}
+  {% for field in wizard.form.visible_fields %}
+    <fieldset class="form-label-group">
+        {{ field }}
+        {% if not field.label == "Method" %}
+        <label for="{{ field.id }}">{{ field.label }}</label>
+        {% endif %}
+        {% for error in field.errors %}
+          <span class="error">{{ error }}</span>
+        {% endfor %}
+    </fieldset>
+  {% endfor %}

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="400px" height="400px" viewBox="0 0 400 400" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52.4 (67378) - http://www.bohemiancoding.com/sketch -->
+    <title>Group 2 Copy</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group-2-Copy">
+            <path d="M0,0 L400,0 L400,400 L0,400 L0,0 Z M200,364 C281.738143,364 348,290.574699 348,200 C348,109.425301 281.738143,36 200,36 C118.261857,36 52,109.425301 52,200 C52,290.574699 118.261857,364 200,364 Z" id="Combined-Shape" fill="#222222" opacity="0.401901972"></path>
+            <path d="M200,364 C281.738143,364 348,290.574699 348,200 C348,109.425301 281.738143,36 200,36 C118.261857,36 52,109.425301 52,200 C52,290.574699 118.261857,364 200,364 Z" id="Oval" stroke="#B2D6C7" stroke-width="4" stroke-linecap="round" stroke-dasharray="10,10"></path>
+        </g>
+    </g>
+</svg>

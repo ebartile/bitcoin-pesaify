@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="88px" height="120px" viewBox="0 0 88 120" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52 (66869) - http://www.bohemiancoding.com/sketch -->
+    <title>passport-illustration</title>
+    <desc>Created with Sketch.</desc>
+    <g id="passport-illustration" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g>
+            <rect id="Rectangle" x="0" y="0" width="88" height="120"/>
+            <g id="passport">
+                <path d="M5,0 L6,0 L6,120 L5,120 C2.23857625,120 3.38176876e-16,117.761424 0,115 L0,5 C-3.38176876e-16,2.23857625 2.23857625,5.07265313e-16 5,0 Z" id="Rectangle-13-Copy-10" fill="#F3C9D3"/>
+                <path d="M6,0 L83,0 C85.7614237,-5.07265313e-16 88,2.23857625 88,5 L88,115 C88,117.761424 85.7614237,120 83,120 L6,120 L6,0 Z" id="Rectangle-13-Copy-11" fill="#77336B"/>
+                <path d="M47,71 C59.676688,71 70,60.2796375 70,47 C70,33.7203625 59.676688,23 47,23 C34.323312,23 24,33.7203625 24,47 C24,60.2796375 34.323312,71 47,71 Z M47,74 C32.6405965,74 21,61.9116882 21,47 C21,32.0883118 32.6405965,20 47,20 C61.3594035,20 73,32.0883118 73,47 C73,61.9116882 61.3594035,74 47,74 Z" id="Oval-Copy-2" fill="#F3C9D3" fill-rule="nonzero"/>
+                <path d="M47.1586658,70 C53.7554453,70 60,59.469654 60,46.5 C60,33.9307964 53.3195189,23 47.1586658,23 C40.8093587,23 34,33.725426 34,46.5 C34,59.6588189 40.3754678,70 47.1586658,70 Z M47.1586658,73 C38.4236346,73 31,61.2488715 31,46.5 C31,31.7511285 39.1262114,20 47.1586658,20 C55.1911201,20 63,32.1971647 63,46.5 C63,60.8028353 55.8936969,73 47.1586658,73 Z" id="Oval-Copy-3" fill="#F3C9D3" fill-rule="nonzero"/>
+                <polygon id="Rectangle-4-Copy-3" fill="#F3C9D3" points="23 46 70 46 70 49 23 49"/>
+                <polygon id="Rectangle-2-Copy" fill="#F3C9D3" points="46 23 49 23 49 74 46 74"/>
+                <polygon id="Rectangle-4-Copy-4" fill="#F3C9D3" points="26 33 68 33 68 36 26 36"/>
+                <polygon id="Rectangle-4-Copy-5" fill="#F3C9D3" points="27 59 67 59 67 62 27 62"/>
+                <path d="M27,90 L67,90 C68.1045695,90 69,90.8954305 69,92 L69,92 C69,93.1045695 68.1045695,94 67,94 L27,94 C25.8954305,94 25,93.1045695 25,92 L25,92 C25,90.8954305 25.8954305,90 27,90 Z" id="Rectangle-10-Copy-7" fill="#F6E4E7"/>
+                <path d="M34,99 L60,99 C61.1045695,99 62,99.8954305 62,101 L62,101 C62,102.104569 61.1045695,103 60,103 L34,103 C32.8954305,103 32,102.104569 32,101 L32,101 C32,99.8954305 32.8954305,99 34,99 Z" id="Rectangle-10-Copy-8" fill="#F6E4E7"/>
+            </g>
+        </g>
+    </g>
+</svg>

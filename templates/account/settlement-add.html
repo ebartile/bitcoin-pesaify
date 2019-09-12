@@ -1,0 +1,414 @@
+{% extends 'layout.html' %}
+{% load static i18n humanize %}
+{% block title %}{% trans 'Add Settlement' %}{% endblock title %}
+
+{% block extrastyles %}
+{% endblock %}
+
+
+{% block content %}
+<div class="app-content content">
+    <div class="content-wrapper">
+        <form class="form-horizontal form-user-profile row mt-2" id="settlement-detail" action="#" method="POST">
+            {% csrf_token %}
+            <div class="content-header row">
+                <div class="content-header-left col-md-8 col-12 mb-2 breadcrumb-new">
+                    <h3 class="content-header-title mb-0 d-inline-block">{% trans 'Settlement' %}</h3>
+                    <div class="row breadcrumbs-top d-inline-block">
+                    <div class="breadcrumb-wrapper col-12">
+                        <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'pesaify-account' %}">{% trans 'Account' %}</a>
+                        </li>
+                        <li class="breadcrumb-item"><a href="{% url 'pesaify-account-settlement' %}">{% trans 'Settlement' %}</a>
+                        </li>
+                        <li class="breadcrumb-item active">{% trans 'Add' %}
+                        </li>
+                        </ol>
+                    </div>
+                    </div>
+                </div>
+            </div>
+            <div class="content-body row">
+                {% if not request.user.dismiss_message and request.user.message %}
+                <div class="alert alert-dismissable alert-success">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true" id="dismiss">&times;</button>
+                    {{ request.user.message|safe }}
+                </div>
+                {% endif %}
+                <div class="col-12 text-right mb-2">
+                    <a href="{% url 'pesaify-account-settlement' %}" class="btn btn-default">{% trans 'Cancel' %}</a>
+                    <button type="submit" class="btn btn-info">{% trans 'Save' %}</button>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="">
+                        <div class="card-content collapse show">
+                            <div class="card-body">
+                                <p class="text-bold-700 text-uppercase mb-0">{% trans 'Currency and Location' %}</p>
+                                <p class="mt-2">{% trans "Select the currency you'd like to receive in your settlement and the country of your bank location or mobile money company." %}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="card">
+                        <div class="card-content collapse show">
+                            <div class="card-body">
+                                <small class="detail-error error"></small>
+                                <div class="col-12">
+                                    <fieldset class="form-label-group">
+                                        <select class="form-control" id="currency" required name="currency">
+                                            <option></option>
+                                            <optgroup label="Mobile">
+                                                <option value="MM"> Mobile Money </option>
+                                            </optgroup>
+                                            <optgroup label="Fiat">
+                                                <option value="UGX"> Uganda Shillings (UGX) </option>
+                                                <option value="KES"> Kenya Shillings (KES) </option>
+                                                <option value="TZS"> Tanzania Shillings (TZS) </option>
+                                                <option value="EUR"> Eurozone Euros (EUR) </option>
+                                                <option value="GBP"> Pounds Sterling (GBP) </option>
+                                                <option value="USD"> US Dollars (USD) </option>
+                                            </optgroup>
+                                            <optgroup label="Crypto">
+                                                <option value="BTC"> Bitcoin (BTC) </option>
+                                                <option value="BCH"> Bitcoin Cash (BCH) </option>
+                                            </optgroup>
+                                        </select>
+                                        <small class="currency-error error"></small>
+                                    </fieldset>
+                                </div>
+                                <div class="col-12" id="bank-country">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                </div>
+                <div class="row col-md-12" id="settlement-details"></div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block scripts %}
+    {{ block.super }}
+{% endblock %}
+
+{% block onbodyload %}
+    {{ block.super }}
+    $('#currency').on('change', function(){
+        switch($(this).val()) {
+            case 'BTC':
+            case 'BCH':
+                $("#bank-country").html("");
+                $("#settlement-details").html(`
+                    <div class="col-12 col-md-6">
+                        <div class="">
+                            <div class="card-content collapse show">
+                                <div class="card-body">
+                                    <p class="text-bold-700 text-uppercase mb-0">{% trans ' Wallet Information ' %}</p>
+                                    <p class="mt-2">{% trans " Complete the form with your wallet details to receive your settlement. " %}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="card">
+                            <div class="card-content collapse show">
+                                <div class="card-body row">
+                                    <div class="col-12 col-md-1">
+                                        <i class="fa fa-info-circle fa-2x address-info"></i>
+                                    </div>
+                                    <div class="col-12 col-md-11">
+                                        <fieldset class="form-label-group">
+                                            <input type="text" class="form-control" id="address" autofocus="" name="address" required="">
+                                            <label for="address">{% trans ' Wallet Address ' %} *</label>
+                                            <small class="address-error error"></small>
+                                        </fieldset>
+                                    </div>
+                                    <div class="col-12 col-md-1">
+                                        <i class="fa fa-info-circle fa-2x label-info"></i>
+                                    </div>
+                                    <div class="col-12 col-md-11">
+                                        <fieldset class="form-label-group">
+                                            <input type="text" class="form-control" id="label" autofocus="" name="label">
+                                            <label for="label">{% trans 'Nickname' %}</label>
+                                            <small class="label-error error"></small>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `);
+                switch($(this).val()) {
+                    case "BTC":
+                        $('.address-info').tooltip({title: "{% trans "A Crytocurrency address is an identifier consisting of 26-35 alphanumeric characters, beginning with the number 1 or 3. Addresses can be generated at no cost by any user of Crytocurrency. To avoid mistakes, please use the Copy & Paste function on your device. Please make sure to double-check the receiving address. Pesaify is not able to reverse the settlement if sent to a wrong address." %}", trigger: "hover"});
+                        break;
+                    case "BCH":
+                        $('.address-info').tooltip({title: "{% trans 'A Bitcoin Cash address can begin with the prefix bitcoincash: and/or the letter q or p. Addresses can be generated at no cost by any user of Bitcoin Cash.' %}", trigger: "hover"});
+                        break;
+                }
+                $('.label-info').tooltip({title: "{% trans "A nickname to identify this wallet in the case of multiple wallets/currencies." %}", trigger: "hover"});
+
+                $('#settlement-detail').validate({
+                    url: "{% url 'crypto-currency-list' %}",
+                    type: "POST",
+                    event: 'submit',
+                    beforeSend: function(jqXHR, setting) {
+                        $("#settlement-detail button").html("<img src='{% static 'pesaify/images/loading.gif' %}' alt='' width='25' height='25'>");
+                        $("#settlement-detail button").attr("disabled",true);
+                        $(".error").html("");
+                    },
+                    success: function(data, textStatus, jqXHR) {
+                        $("#settlement-detail button").html("{% trans 'Submit' %}");
+                        $("#settlement-detail button").removeAttr("disabled");
+                        window.location = '{% url "pesaify-account-settlement" %}';
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        $("#settlement-detail button").html("{% trans 'Submit' %}");
+                        $("#settlement-detail button").removeAttr("disabled");
+                        $.each(jqXHR.responseJSON, function(index,value){
+                            if(index == "detail") {
+                                $(".detail-error").html(value)
+                            } else {
+                                result = ''
+                                $(value).each(function(index,value){result= result + "<p>"+value+"</p>"});
+                                $("." + index.replace(/_/g, '-') + "-error").html(result)
+                            }
+                        })
+                    },
+                });
+
+                break;
+            case 'UGX':
+            case 'KES':
+            case 'TZS':
+            case 'EUR':
+            case 'GBP':
+            case 'USD':
+                $("#settlement-details").html(`
+                    <div class="col-12 col-md-6">
+                        <div class="">
+                            <div class="card-content collapse show">
+                                <div class="card-body">
+                                    <p class="text-bold-700 text-uppercase mb-0">{% trans ' Bank Information ' %}</p>
+                                    <p class="mt-2">{% trans " Complete the form with your banking details to receive your settlement. " %}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="card">
+                            <div class="card-content collapse show">
+                                <div class="card-body row">
+                                    <div class="col-12 mb-2 info hidden">
+                                        <div class="p-1 success">
+                                            <p class="">{% trans "Settlement timing: Settlement will appear in your bank account after one business days." %}</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <fieldset class="form-label-group">
+                                            <input type="text" class="form-control" id="bank-name" autofocus="" name="name" required="">
+                                            <label for="bank-name">{% trans ' Bank Name ' %} *</label>
+                                            <small class="bank-name-error error"></small>
+                                        </fieldset>
+                                    </div>
+                                    <div class="col-12">
+                                        <fieldset class="form-label-group">
+                                            <input type="text" class="form-control" id="bank-address" autofocus="" name="address" required="">
+                                            <label for="bank-address">{% trans ' Bank Address ' %} *</label>
+                                            <small class="bank-address-error error"></small>
+                                        </fieldset>
+                                    </div>
+                                    <div class="col-12">
+                                        <fieldset class="form-label-group">
+                                            <input type="text" class="form-control" id="bank-city" autofocus="" name="city" required="">
+                                            <label for="bank-city">{% trans ' Bank City ' %} *</label>
+                                            <small class="bank-city-error error"></small>
+                                        </fieldset>
+                                    </div>
+                                    <div class="col-12">
+                                        <fieldset class="form-label-group">
+                                            <input type="text" class="form-control" id="bank-post-code" autofocus="" name="post_code" required="">
+                                            <label for="bank-post-code">{% trans ' Post Code ' %} *</label>
+                                            <small class="bank-post-code-error error"></small>
+                                        </fieldset>
+                                    </div>
+                                    <div class="col-12">
+                                        <fieldset class="form-label-group">
+                                            <input type="text" class="form-control" id="bank-account-name" autofocus="" name="account_name" required="">
+                                            <label for="bank-account-name">{% trans ' Name on Bank Account ' %} *</label>
+                                            <small class="bank-account-name-error error"></small>
+                                        </fieldset>
+                                    </div>
+                                    <div class="col-12">
+                                        <fieldset class="form-label-group">
+                                            <input type="text" class="form-control" id="bank-account-number" autofocus="" name="account_number" required="">
+                                            <label for="bank-account-number">{% trans ' Account Number ' %} *</label>
+                                            <small class="bank-account-number-error error"></small>
+                                        </fieldset>
+                                    </div>
+                                    <div class="col-12 col-md-1">
+                                        <i class="fa fa-info-circle fa-2x swift-bic-info"></i>
+                                    </div>
+                                    <div class="col-12 col-md-11">
+                                        <fieldset class="form-label-group">
+                                            <input type="text" class="form-control" id="swift-bic" autofocus="" name="swift_bic" required="">
+                                            <label for="swift-bic">{% trans 'SWIFT/BIC' %} *</label>
+                                            <small class="swift-bic-error error"></small>
+                                        </fieldset>
+                                    </div>
+                                    <div class="col-12 col-md-1">
+                                        <i class="fa fa-info-circle fa-2x label-info"></i>
+                                    </div>
+                                    <div class="col-12 col-md-11">
+                                        <fieldset class="form-label-group">
+                                            <input type="text" class="form-control" id="label" autofocus="" name="label">
+                                            <label for="label">{% trans 'Nickname' %}</label>
+                                            <small class="label-error error"></small>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `);
+                $('.label-info').tooltip({title: "{% trans "A nickname to identify this wallet in the case of multiple wallets/currencies." %}", trigger: "hover"});
+                $('.swift-bic-info').tooltip({title: "{% trans "A unique identification code consisting of 8 or 11 alphanumeric characters used for both financial and non-financial institutions. If you are not sure about your bank's SWIFT/BIC code, you can search for it at https://www.iban.com/search-bic" %}", trigger: "hover"});
+                $("#bank-country").html(`
+                    <a href="https://pesaify.com/question/settlement/">{% trans "Don't see your bank country?" %}</a>
+                    <fieldset class="form-label-group">
+                        <select class="form-control" id="country" required name="country">
+                            {% for country in countries %}
+                                <option value="{{ country.code }}">{{ country.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <small class="country-error error"></small>
+                    </fieldset>
+                `);
+                $('#settlement-detail').validate({
+                    url: "{% url 'bank-list' %}",
+                    type: "POST",
+                    event: 'submit',
+                    beforeSend: function(jqXHR, setting) {
+                        $("#settlement-detail button").html("<img src='{% static 'pesaify/images/loading.gif' %}' alt='' width='25' height='25'>");
+                        $("#settlement-detail button").attr("disabled",true);
+                        $(".error").html("");
+                    },
+                    success: function(data, textStatus, jqXHR) {
+                        $("#settlement-detail button").html("{% trans 'Submit' %}");
+                        $("#settlement-detail button").removeAttr("disabled");
+                        window.location = '{% url "pesaify-account-settlement" %}';
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        $("#settlement-detail button").html("{% trans 'Submit' %}");
+                        $("#settlement-detail button").removeAttr("disabled");
+                        $.each(jqXHR.responseJSON, function(index,value){
+                            if(index == "detail") {
+                                $(".detail-error").html(value)
+                            } else {
+                                result = ''
+                                $(value).each(function(index,value){result= result + "<p>"+value+"</p>"});
+                                $("." + index.replace(/_/g, '-') + "-error").html(result)
+                            }
+                        })
+                    },
+                });
+                break;
+            case 'MM':
+                $("#settlement-details").html(`
+                    <div class="col-12 col-md-6">
+                        <div class="">
+                            <div class="card-content collapse show">
+                                <div class="card-body">
+                                    <p class="text-bold-700 text-uppercase mb-0">{% trans ' Mobile Money Information ' %}</p>
+                                    <p class="mt-2">{% trans " Complete the form with your mobile money details to receive your settlement. " %}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="card">
+                            <div class="card-content collapse show">
+                                <div class="card-body row">
+                                    <div class="col-12 mb-2 info hidden">
+                                        <div class="p-1 success">
+                                            <p class="">{% trans "Settlement timing: Settlement will appear in your mobile account after one business days." %}</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <fieldset class="form-label-group">
+                                            <input type="text" class="form-control" id="phone-number" autofocus="" name="phone_number" required="">
+                                            <label for="phone-number">{% trans ' Mobile Money Phone Number ' %} *</label>
+                                            <small class="phone-number-error error"></small>
+                                        </fieldset>
+                                    </div>
+                                    <div class="col-12 col-md-1">
+                                        <i class="fa fa-info-circle fa-2x mobile-money-info"></i>
+                                    </div>
+                                    <div class="col-12 col-md-11">
+                                        <fieldset class="form-label-group">
+                                            <input type="text" class="form-control" id="label" autofocus="" name="label" required="">
+                                            <label for="label">{% trans 'Registered Name of Mobile Number' %} *</label>
+                                            <small class="label-error error"></small>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `);
+                $('.mobile-money-info').tooltip({title: "{% trans "A name to how the phone number is register." %}", trigger: "hover"});
+                $("#bank-country").html(`
+                    <a href="https://pesaify.com/question/settlement/">{% trans "Don't see your mobile service provider country?" %}</a>
+                    <fieldset class="form-label-group">
+                        <select class="form-control" id="country" required name="country">
+                            <option></option>
+                            <option value="UG">{% trans 'Uganda' %}</option>
+                            <option value="KE">{% trans 'Kenya' %}</option>
+                            <option value="TZ">{% trans 'Tanzania' %}</option>
+                        </select>
+                        <small class="country-error error"></small>
+                    </fieldset>
+                `);
+                $("#country").on("change", function(){
+                    $(".info").removeClass("hidden");
+                });
+                $('#settlement-detail').validate({
+                    url: "{% url 'mobile-money-list' %}",
+                    type: "POST",
+                    event: 'submit',
+                    beforeSend: function(jqXHR, setting) {
+                        $("#settlement-detail button").html("<img src='{% static 'pesaify/images/loading.gif' %}' alt='' width='25' height='25'>");
+                        $("#settlement-detail button").attr("disabled",true);
+                        $(".error").html("");
+                    },
+                    success: function(data, textStatus, jqXHR) {
+                        $("#settlement-detail button").html("{% trans 'Submit' %}");
+                        $("#settlement-detail button").removeAttr("disabled");
+                        window.location = '{% url "pesaify-dashboard-get-started" %}';
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        $("#settlement-detail button").html("{% trans 'Submit' %}");
+                        $("#settlement-detail button").removeAttr("disabled");
+                        $.each(jqXHR.responseJSON, function(index,value){
+                            if(index == "detail") {
+                                $(".detail-error").html(value)
+                            } else {
+                                result = ''
+                                $(value).each(function(index,value){result= result + "<p>"+value+"</p>"});
+                                $("." + index.replace(/_/g, '-') + "-error").html(result)
+                            }
+                        })
+                    },
+                });
+                break;
+            default:
+                $("#account-details").html("{% trans 'An Error has occurred.Please Contact ' %}<a href='mailto:support@pesaify.com'>support@pesaify.com</a>");
+                break;
+        }
+    });
+{% endblock %}

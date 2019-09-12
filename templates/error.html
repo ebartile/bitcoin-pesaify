@@ -1,0 +1,57 @@
+{% extends "layout.html" %}
+{% load static i18n sr %}
+
+{% block layout %}
+<nav class="header-navbar navbar-expand-md navbar navbar-with-menu navbar-without-dd-arrow fixed-top navbar-light navbar-bg-color">
+    <div class="navbar-wrapper">
+        <div class="navbar-header d-md-none">
+            <ul class="nav navbar-nav flex-row">
+                <li class="nav-item mobile-menu d-md-none mr-auto"><a class="nav-link nav-menu-main menu-toggle hidden-xs" href="#"><i class="fa fa-bars font-large-1"></i></a></li>
+                <li class="nav-item d-md-none"><a class="navbar-brand" href="https://business.pesaify.com/"><img height="60px" class="d-none d-md-block" alt="logo" src="{% static 'pesaify/images/logo.png' %}"><img height="60px" class="d-sm-block d-md-none" alt="logo sm" src="{% static 'pesaify/images/logo-sm.png' %}"></a></li>
+                <li class="nav-item d-md-none"><a class="nav-link open-navbar-container" data-toggle="collapse" data-target="#navbar-mobile"><i class="la la-ellipsis-v"></i></a></li>
+            </ul>
+        </div>
+        <div class="navbar-container">
+            <div class="collapse navbar-collapse" id="navbar-mobile">
+                <ul class="nav navbar-nav mr-auto float-left">
+                    <li class="nav-item d-none d-md-block"><a class="navbar-brand" href="https://business.pesaify.com/"><img height="60px" class="d-none d-md-block" alt="logo" src="{% static 'pesaify/images/logo-sm.png' %}"><img height="60px" class="d-sm-block d-md-none" alt="logo sm" src="{% static 'pesaify/images/logo-sm.png' %}"></a></li>
+                </ul>
+                <ul class="nav navbar-nav float-right">
+                    <li class="dropdown dropdown-notification nav-item"><a class="nav-link nav-link-label" href="{% sr 'social.instagram_url' %}"><i class="fa fa-instagram" aria-hidden="true"></i></a></li>
+                    <li class="dropdown dropdown-notification nav-item"><a class="nav-link nav-link-label" href="{% sr 'social.facebook_url' %}"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
+                    <li class="dropdown dropdown-notification nav-item"><a class="nav-link nav-link-label" href="{% sr 'social.twitter_url' %}"> <i class="fa fa-twitter" aria-hidden="true"></i></a></li>
+                    <li class="dropdown dropdown-notification nav-item"><a class="nav-link nav-link-label" href="{% sr 'social.github_url' %}"><i class="fa fa-github" aria-hidden="true"></i></a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="app-content content">
+    <div class="content-wrapper">
+        <div class="content-body">
+            {% if not request.user.dismiss_message and request.user.message %}
+            <div class="alert alert-dismissable alert-success">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true" id="dismiss">&times;</button>
+                {{ request.user.message|safe }}
+            </div>
+            {% endif %}
+            <div class="row">
+                <div class="col-12 col-md-6 offset-md-2 text-center">
+                    <div class="error-img">
+                        <img src="{% static 'pesaify/images/animat-rocket-color.gif' %}" alt="" class="img-fluid" height="250">
+                    </div>
+                    <h2 class="error-info">{% block error_code %}{% endblock %}</h2>
+                    <h4 class="error-info">{% block error_message %}{% endblock %}</h4>
+                    <p class="error-info">{% block error_help %}{% endblock %}</p>
+                    <a href="https://business.pesaify.com/" class="btn btn-glow btn-gradient-blue btn-round">Back to Home</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% include "partials/footer.html" %}
+
+{% endblock %}
+

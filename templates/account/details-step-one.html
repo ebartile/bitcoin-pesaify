@@ -1,0 +1,233 @@
+{% extends 'layout.html' %}
+{% load static i18n %}
+{% block title %}{% trans 'Account Details' %}{% endblock title %}
+
+{% block extrastyles %}
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css">
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker-standalone.min.css">
+{% endblock %}
+
+{% block content %}
+
+<div class="app-content content">
+    <div class="content-wrapper">
+        <div class="content-header row">
+            <div class="content-header-left col-md-8 col-12 mb-2 breadcrumb-new">
+                <h3 class="content-header-title mb-0 d-inline-block">{% trans 'Account Details' %}</h3>
+                <div class="row breadcrumbs-top d-inline-block">
+                    <div class="breadcrumb-wrapper col-12">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'pesaify-dashboard' %}">{% trans 'Dashboard' %}</a>
+                            </li>
+                            <li class="breadcrumb-item"><a href="{% url 'pesaify-account' %}">{% trans 'Account' %}</a>
+                            </li>
+                            <li class="breadcrumb-item active">{% trans 'Details' %}
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="content-body">
+            {% if not request.user.dismiss_message and request.user.message %}
+            <div class="alert alert-dismissable alert-success">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true" id="dismiss">&times;</button>
+                {{ request.user.message|safe }}
+            </div>
+            {% endif %}
+            <div class="row">
+                <div class="col-12">
+                    <p class="text-bold-700 mb-0">{% trans "Basic verification will allow us to get to know you." %}</p>
+                    <p class="text-bold-200 mb-0">{% trans "We'll send you a confirmation email within a few minutes of submitting your verification." %}</p>
+                    <hr class="mb-2"/>
+                </div>
+                <div class="col-12 col-md-12">
+                    <section class="">
+                        <div class="card-content">
+                            <div class="card-body">
+                                <div class="col-12">
+                                    <div class="row">
+                                        <div class="col-md-12 col-12">
+                                            <div class="row">
+                                                <div class="col-12 col-md-4">
+                                                    <p class="text-bold-700 text-uppercase mb-0">{% trans 'About You' %}</p>
+                                                </div>
+                                            </div>
+                                            <small class="detail-error error"></small>
+                                            <hr/>
+                                            <form class="form-horizontal form-user-profile row mt-2" id="user-detail" action="#" method="PATCH">
+                                                {% csrf_token %}
+                                                <div class="col-12 col-md-6">
+                                                    <fieldset class="form-label-group">
+                                                        <input type="text" class="form-control" id="first-name" name="first_name" required="" autofocus="" value="{{ request.user.first_name }}">
+                                                        <label for="first-name">{% trans 'First name' %} *</label>
+                                                        <small class="first-name-error error"></small>
+                                                    </fieldset>
+                                                </div>
+                                                <div class="col-12 col-md-6">
+                                                    <fieldset class="form-label-group">
+                                                        <input type="text" class="form-control" id="middle-name" name="middle_name" autofocus="" value="{{ request.user.middle_name }}">
+                                                        <label for="middle-name">{% trans 'Middle name' %}</label>
+                                                        <small class="middle-name-error error"></small>
+                                                    </fieldset>
+                                                </div>
+                                                <div class="col-12 col-md-6">
+                                                    <fieldset class="form-label-group">
+                                                        <input type="text" class="form-control" id="last-name" name="last_name" required="" autofocus="" value="{{ request.user.last_name }}">
+                                                        <label for="last-name">{% trans 'Last name' %} *</label>
+                                                        <small class="last-name-error error"></small>
+                                                    </fieldset>
+                                                </div>
+                                                <div class="col-12">
+                                                    <p class="text-bold-700 text-uppercase mb-0">{% trans 'Your Address ' %}</p>
+                                                    <p class="text-bold-200 mb-0">{% trans "Please provide the address where you currently stay." %}</p>
+                                                    <hr/>
+                                                </div>
+                                                <div class="col-12 col-md-6">
+                                                    <fieldset class="form-label-group">
+                                                        <input type="text" class="form-control" id="phone-number" value="{{ request.user.phone_number }}" required="" autofocus="" name="phone_number">
+                                                        <label for="phone-number">{% trans 'Phone Number' %} *</label>
+                                                        <small class="phone-number-error error"></small>
+                                                    </fieldset>
+                                                </div>
+                                                <div class="col-12 col-md-6">
+                                                    <fieldset class="form-label-group">
+                                                        <select class="form-control" id="nationality" required name="nationality">
+                                                            {% for country in countries %}
+                                                                <option value="{{ country.code }}" {% if request.user.nationality.code == country.code %}selected{% endif %}>{{ country.name }}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                        <small class="nationality-error error"></small>
+                                                    </fieldset>
+                                                </div>
+                                                <div class="col-12 col-md-6">
+                                                    <fieldset class="form-label-group">
+                                                        <input type="text" class="form-control" id="date-of-birth" value="{{ request.user.date_of_birth|date:'Y-m-d' }}" required="" autofocus="" placeholder="{% trans 'Date of Birth' %}" name="date_of_birth">
+                                                        <label for="date-of-birth">{% trans 'Date Of Birth' %} *</label>
+                                                        <small class="date-of-birth-error error"></small>
+                                                    </fieldset>
+                                                </div>
+                                                <div class="col-12 col-md-6">
+                                                    <fieldset class="form-label-group">
+                                                        <input type="text" class="form-control" id="address" value="{{ request.user.address }}" required="" autofocus="" name="address">
+                                                        <label for="address">{% trans 'Address' %} *</label>
+                                                        <small class="address-error error"></small>
+                                                    </fieldset>
+                                                </div>
+                                                <div class="col-12 col-md-6">
+                                                    <fieldset class="form-label-group">
+                                                        <input type="text" class="form-control" id="address-two" value="{{ request.user.address_two }}" autofocus="" name="address_two">
+                                                        <label for="address-two">{% trans 'Second Address' %}</label>
+                                                        <small class="address-two-error error"></small>
+                                                    </fieldset>
+                                                </div>
+                                                <div class="col-12 col-md-6">
+                                                    <fieldset class="form-label-group">
+                                                        <input type="text" class="form-control" id="city" value="{{ request.user.city }}" required="" autofocus="" name="city">
+                                                        <label for="city">{% trans 'City' %} *</label>
+                                                        <small class="city-error error"></small>
+                                                    </fieldset>
+                                                </div>
+                                                <div class="col-12 col-md-6">
+                                                    <fieldset class="form-label-group">
+                                                        <input type="text" class="form-control" id="region" value="{{ request.user.region }}" autofocus="" name="region">
+                                                        <label for="region">{% trans 'Region' %}</label>
+                                                        <small class="region-error error"></small>
+                                                    </fieldset>
+                                                </div>
+                                                <div class="col-12">
+                                                    <p class="text-bold-200 mb-0">{% trans "Please ensure the above information is correct as you will not be able to make changes to this information later." %}</p>
+                                                </div>
+
+                                                <div class="col-12 text-right">
+                                                    <button type="submit" class="btn btn-info">{% trans 'Submit' %}</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+                <div class="col-12 col-md-5">
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+    {{ block.super }}
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js" type="text/javascript"></script>
+{% endblock %}
+
+{% block onbodyload %}
+    {{ block.super }}
+    $('#user-detail').validate({
+        url: "{% url 'users-detail' request.user.id %}",
+        type: "PATCH",
+        event: 'submit',
+        beforeSend: function(jqXHR, setting) {
+            $("#user-detail button").html("<img src='{% static 'pesaify/images/loading.gif' %}' alt='' width='25' height='25'>");
+            $("#user-detail button").attr("disabled",true);
+            $(".error").html("");
+        },
+        success: function(data, textStatus, jqXHR) {
+            $("#user-detail button").html("{% trans 'Submit' %}");
+            $("#user-detail button").removeAttr("disabled");
+            $.notify({
+                icon: "{% if request.user.get_photo %}{{ request.user.get_photo }}{% else %}{% static 'pesaify/avatars/avatar-1.png' %}{% endif %}",
+                title: 'Profile Update',
+                message: 'You have updated your profile'
+            },{
+                type: 'minimalist',
+                delay: 10000,
+                placement: {
+                    from: "top",
+                    align: "right"
+                },
+                animate: {
+                    enter: 'animated fadeInLeftBig',
+                    exit: 'animated fadeOutLeftBig'
+                },
+                icon_type: 'image',
+                template: '<div data-notify="container" class="alert alert-{0} card" role="alert">' +
+                    '<div id="image">' +
+                    '<img data-notify="icon" class="rounded-circle float-left" height="80px">' +
+                    '</div><div id="text">' +
+                    '<span data-notify="title">{1}</span><br>' +
+                    '<span data-notify="message">{2}</span><br>' +
+                    '</div>'+
+                '</div>'
+            });
+
+            var snd = new  Audio(`data:audio/wav;base64,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qJrx4KOQjahZxWbcZgztj2c49nKmkId44S71j0c8eV9yDK6uPRzx5X18eDvjvQ6yKo9ZSS6l//8elePK/Lf//IInrOF/FvDoADYAGBMGb7FtErm5MXMlmPAJQVgWta7Zx2go+8xJ0UiCb8LHHdftWyLJE0QIAIsI+UbXu67dZMjmgDGCGl1H+vpF4NSDckSIkk7Vd+sxEhBQMRU8j/12UIRhzSaUdQ+rQU5kGeFxm+hb1oh6pWWmv3uvmReDl0UnvtapVaIzo1jZbf/pD6ElLqSX+rUmOQNpJFa/r+sa4e/pBlAABoAAAAA3CUgShLdGIxsY7AUABPRrgCABdDuQ5GC7DqPQCgbbJUAoRSUj+NIEig0YfyWUho1VBBBA//uQZB4ABZx5zfMakeAAAAmwAAAAF5F3P0w9GtAAACfAAAAAwLhMDmAYWMgVEG1U0FIGCBgXBXAtfMH10000EEEEEECUBYln03TTTdNBDZopopYvrTTdNa325mImNg3TTPV9q3pmY0xoO6bv3r00y+IDGid/9aaaZTGMuj9mpu9Mpio1dXrr5HERTZSmqU36A3CumzN/9Robv/Xx4v9ijkSRSNLQhAWumap82WRSBUqXStV/YcS+XVLnSS+WLDroqArFkMEsAS+eWmrUzrO0oEmE40RlMZ5+ODIkAyKAGUwZ3mVKmcamcJnMW26MRPgUw6j+LkhyHGVGYjSUUKNpuJUQoOIAyDvEyG8S5yfK6dhZc0Tx1KI/gviKL6qvvFs1+bWtaz58uUNnryq6kt5RzOCkPWlVqVX2a/EEBUdU1KrXLf40GoiiFXK///qpoiDXrOgqDR38JB0bw7SoL+ZB9o1RCkQjQ2CBYZKd/+VJxZRRZlqSkKiws0WFxUyCwsKiMy7hUVFhIaCrNQsKkTIsLivwKKigsj8XYlwt/WKi2N4d//uQRCSAAjURNIHpMZBGYiaQPSYyAAABLAAAAAAAACWAAAAApUF/Mg+0aohSIRobBAsMlO//Kk4soosy1JSFRYWaLC4qZBYWFRGZdwqKiwkNBVmoWFSJkWFxX4FFRQWR+LsS4W/rFRb/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////VEFHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAU291bmRib3kuZGUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMjAwNGh0dHA6Ly93d3cuc291bmRib3kuZGUAAAAAAAAAACU=`);
+            snd.play();
+
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            $("#user-detail button").html("{% trans 'Submit' %}");
+            $("#user-detail button").removeAttr("disabled");
+            $.each(jqXHR.responseJSON, function(index,value){
+                if(index == "detail") {
+                    $(".detail-error").html(value)
+                } else {
+                    result = ''
+                    $(value).each(function(index,value){result= result + "<p>"+value+"</p>"});
+                    $("." + index.replace(/_/g, '-') + "-error").html(result)
+                }
+            })
+        },
+    });
+
+    $('#date-of-birth').datetimepicker({
+        format:'YYYY-MM-DD',
+        maxDate: '{% now "Y/m/d" %}'
+    });
+{% endblock %}

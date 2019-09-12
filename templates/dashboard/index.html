@@ -1,0 +1,213 @@
+{% extends 'layout.html' %}
+{% load static i18n humanize %}
+{% block title %}{% trans 'Dashboard' %}{% endblock title %}
+
+{% block extrastyles %}
+{% endblock %}
+
+{% block content %}
+<div class="app-content content">
+    <div class="content-wrapper">
+        <div class="content-header row">
+        </div>
+
+        <div class="content-body">
+
+            {% if not request.user.dismiss_message and request.user.message %}
+            <div class="alert alert-dismissable alert-success">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true" id="dismiss">&times;</button>
+                {{ request.user.message|safe }}
+            </div>
+            {% endif %}
+
+            <div class="row">
+                <div class="col-12">
+                    <h6 class="my-2">{% trans 'Pesafiy balance' %}</h6>
+                    <div class="card pull-up">
+                        <div class="card-content">
+                            <div class="card-body">
+                                <div class="col-12">
+                                    <div class="row">
+                                        <div class="col-12 col-md-6">
+                                            <p><strong>{% trans 'Your Pesaify balance:' %}</strong></p>
+                                            <h1>{{ request.user.balance }}</h1>
+                                        </div>
+                                        <div class="col-12 col-md-6">
+                                            <ul class="social-buttons list-unstyled">
+                                                <p>{% trans 'Share to your experience with friends on' %}:</p>
+                                                <li>
+                                                    <a class="btn btn-outline-facebook rounded-circle" href="https://www.facebook.com/sharer/sharer.php?u={{ request.get_host }}{% url 'pesaify-signup' %}" target="_blank"><i class="fa fa-facebook"></i></a>
+                                                </li>
+                                                <li>
+                                                    <a class="btn btn-outline-twitter rounded-circle" href="https://twitter.com/intent/tweet?text=Recieve%20Bitcoins%20with%20Pesaify%20.%20Check%20it%20out%21%20{{ request.get_host }}{% url 'pesaify-signup' %}" target="_blank"><i class="fa fa-twitter"></i></a>
+                                                </li>
+                                                <li>
+                                                    <a class="btn btn-outline-linkedin rounded-circle" href="https://www.linkedin.com/shareArticle?mini=true&title=Recieve%20Bitcoins%20with%20Pesaify%20.%20Check%20it%20out&url={{ request.get_host }}{% url 'pesaify-signup' %}" target="_blank"><i class="fa fa-linkedin"></i></a>
+                                                </li>
+                                                <li>
+                                                    <a class="btn btn-outline-linkedin rounded-circle" href="mailto:?subject={{ request.user.get_full_name }}%20is%20inviting%20you&amp;body={{ request.user.get_full_name }} is inviting you to Pesaify %3A%20.%20Check%20it%20out%21%20{{ request.get_host }}{% url 'pesaify-signup' %}"><i class="fa fa-envelope-o"></i></a>
+                                                </li>
+                                                <li>
+                                                    <a class="btn btn-outline-telegram rounded-circle" href="https://t.me/share/url?text=Recieve%20Bitcoins%20with%20Pesaify%20.%20Check%20it%20out.&url={{ request.get_host }}{% url 'pesaify-signup' %}" target="_blank"><i class="fa fa-telegram"></i></a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <h3>Quick Start</h3>
+                    <section class="card pull-up">
+                        <a href="{% url 'pesaify-payment-tools-email' %}">
+                            <div class="card-content">
+                                <div class="card-body">
+                                    <div class="col-12">
+                                        <div class="row">
+                                            <div class="col-12 col-sm-10 py-1">
+                                                <h4 class="text-bold-700 text-uppercase mb-0">{% trans 'Email Billing' %}</h4>
+                                                <p class="text-bold-200 text-muted mb-0">{% trans 'Simple invoicing and billing to allow your clients to pay you using Bitcoin. ' %}</p>
+                                            </div>
+                                            <div class="col-12 col-sm-2 py-1">
+                                                <img src="{% static 'pesaify/images/envelope.svg' %}" height="70px"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </section>
+
+                    <section class="card pull-up">
+                        <a href="{% url 'pesaify-payment-tools-button' %}">
+                            <div class="card-content">
+                                <div class="card-body">
+                                    <div class="col-12">
+                                        <div class="row">
+                                            <div class="col-12 col-sm-10 py-1">
+                                                <h4 class="text-bold-700 text-uppercase mb-0">{% trans 'Donate Buttons' %}</h4>
+                                                <p class="text-bold-200 text-muted mb-0">{% trans ' Add Pay with Pesaify buttons to your website to allow your customers to make payments using Bitcoin. ' %}</p>
+                                            </div>
+                                            <div class="col-12 col-sm-2 py-1">
+                                                <img src="{% static 'pesaify/images/payment-buttons.svg' %}" height="70px"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </section>
+
+                    <section class="card pull-up">
+                        <a href="{% url 'pesaify-payment-tools-web-checkout' %}">
+                            <div class="card-content">
+                                <div class="card-body">
+                                    <div class="col-12">
+                                        <div class="row">
+                                            <div class="col-12 col-sm-10 py-1">
+                                                <h4 class="text-bold-700 text-uppercase mb-0">{% trans ' Quick Checkout for Web ' %}</h4>
+                                                <p class="text-bold-200 text-muted mb-0">{% trans 'Quickly generate an invoice through a web interface.' %}</p>
+                                            </div>
+                                            <div class="col-12 col-sm-2 py-1">
+                                                <img src="{% static 'pesaify/images/qr-code.svg' %}" height="70px"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </section>
+
+                </div>
+                <div class="col-12 col-md-6">
+                    <h3>Current Settlements</h3>
+                    {% for settlement in request.user.settlements %}
+                    {% if settlement.is_verified == "3" %}
+                    <a href="#">
+                        <div class="card pull-up">
+                            <div class="card-content collapse show">
+                                <div class="card-body">
+                                    <p class="text-bold-200 mb-0 info">
+                                        <span class="d-inline-block d-md-none text-bold-700 mb-2">{% trans 'Currency' %}: </span>  <span class="mb-0 btn-sm btn btn-outline-{% if settlement.is_verified == "1" %}warning{% elif settlement.is_verified == "2" %}danger{% elif settlement.is_verified == "4" %}info{% else %}success{% endif %} round">{% if settlement.currency == 'BTC' %}Bitcion{% elif settlement.currency == 'BCH' %}BitCash{% elif settlement.currency == 'MM' %}Mobile Money{% else %}Bank Account {{ settlement.currency }}{% endif %} {{ settlement.label }}</span>
+                                        <span class="pull-right"><i class="icon-arrow-right"></i></span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                    {% else %}
+                    <a href="{% url 'pesaify-account-settlement' %}">
+                        <div class="card pull-up">
+                            <div class="card-content collapse show">
+                                <div class="card-body">
+                                    <p class="text-bold-200 mb-0 info"><span class="mb-0 btn-sm btn btn-outline-{% if settlement.is_verified == "1" %}warning{% elif settlement.is_verified == "2" %}danger{% elif settlement.is_verified == "4" %}info{% else %}success{% endif %} round">{% if settlement.currency == 'BTC' %}Bitcion{% elif settlement.currency == 'BCH' %}BitCash{% elif settlement.currency == 'MM' %}Mobile Money{% else %}Bank Account {{ settlement.currency }}{% endif %} {{ settlement.label }} is {% if settlement.is_verified == "1" %}pending{% elif settlement.is_verified == "2" %}unverified{% elif settlement.is_verified == "4" %}Under Review{% else %}verified{% endif %}</span><span class="pull-right"><i class="icon-arrow-right"></i></span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                    {% endif %}
+                    {% empty %}
+                    <a href="{% url 'pesaify-account-settlement-add' %}">
+                        <div class="card pull-up">
+                            <div class="card-content collapse show">
+                                <div class="text-center card-body">
+                                    <p class="text-bold-200 mb-0 info">{% trans 'Add Settlements to withdraw your currency' %}<span class="pull-right"><i class="icon-arrow-right"></i></span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                    {% endfor %}
+
+                    <h3>Next Steps</h3>
+                    {% if not default_device %}
+                    <a href="{% url 'two_factor:profile' %}">
+                        <div class="card pull-up">
+                            <div class="card-content collapse show">
+                                <div class="text-center card-body">
+                                    <p class="text-bold-200 mb-0 text-muted">{% trans '<span class="info">Enable two-factor authentication</span> to secure your account.' %}<span class="pull-right"><i class="icon-arrow-right"></i></span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                    {% endif %}
+
+                    <a href="{% if not request.user.business.tier0 == '3' %}{% url 'pesaify-account-verification-step-one' %}{% elif not request.user.business.tier1 == '3' %}{% url 'pesaify-account-verification-step-two' %}{% elif not request.user.business.tier2 == '3' %}{% url 'pesaify-account-verification-step-three' %}{% else %}https://www.pesaify.com/contact-us/{% endif %}">
+                        <div class="card pull-up">
+                            <div class="card-content collapse show">
+                                <div class="text-center card-body">
+                                    <p class="text-bold-200 mb-0 text-muted">You are currently enabled for up to {{ request.user.business.daily_maximum }}/day, {{ request.user.business.annual_maximum }}/year. <br><span class="info">Would you like to raise your limit?</span><span class="pull-right"><i class="icon-arrow-right"></i></span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                    {% if request.user.is_verified == '1' or request.user.is_verified == '2' %}
+                    <a href="{% url 'pesaify-account-details-step-one' %}">
+                        <div class="card pull-up">
+                            <div class="card-content collapse show">
+                                <div class="text-center card-body">
+                                    <p class="text-bold-200 mb-0 info">{% trans '(Optional): Verify your personal details for better clarity.' %}<span class="pull-right"><i class="icon-arrow-right"></i></span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block scripts %}
+    {{ block.super }}
+{% endblock %}
+
+{% block onbodyload %}
+    {{ block.super }}
+{% endblock %}

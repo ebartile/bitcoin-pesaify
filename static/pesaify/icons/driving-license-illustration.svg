@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="136px" height="88px" viewBox="0 0 136 88" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52 (66869) - http://www.bohemiancoding.com/sketch -->
+    <title>driving-license-illustration</title>
+    <desc>Created with Sketch.</desc>
+    <g id="driving-license-illustration" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g>
+            <rect id="Rectangle" x="0" y="0" width="136" height="88"/>
+            <g id="dl">
+                <path d="M9,0 L127,0 C131.970563,-9.13077564e-16 136,4.02943725 136,9 L136,22 L0,22 L0,9 C-6.08718376e-16,4.02943725 4.02943725,2.6894344e-15 9,1.77635684e-15 Z" id="Rectangle-13" fill="#442F4B"/>
+                <path d="M0,22 L136,22 L136,79 C136,83.9705627 131.970563,88 127,88 L9,88 C4.02943725,88 6.08718376e-16,83.9705627 0,79 L0,22 Z" id="Rectangle-13-Copy" fill="#E2C698"/>
+                <rect id="Rectangle-16" fill="#F4E8DE" x="6" y="28" width="43" height="54" rx="5"/>
+                <rect id="Rectangle-16-Copy" fill="#F4E8DE" x="57" y="34" width="49" height="3" rx="1.5"/>
+                <rect id="Rectangle-16-Copy-2" fill="#F4E8DE" x="56" y="40" width="41" height="3" rx="1.5"/>
+                <rect id="Rectangle-16-Copy-26" fill="#F4E8DE" x="56" y="58" width="24" height="3" rx="1.5"/>
+                <rect id="Rectangle-16-Copy-3" fill="#F4E8DE" x="57" y="46" width="54" height="3" rx="1.5"/>
+                <rect id="Rectangle-16-Copy-27" fill="#F4E8DE" x="57" y="64" width="68" height="3" rx="1.5"/>
+                <rect id="Rectangle-16-Copy-4" fill="#F4E8DE" x="57" y="52" width="18" height="3" rx="1.5"/>
+                <rect id="Rectangle-16-Copy-28" fill="#F4E8DE" x="57" y="70" width="53" height="3" rx="1.5"/>
+                <rect id="Rectangle-16-Copy-5" fill="#442F4B" x="57" y="77" width="61" height="4" rx="2"/>
+                <rect id="Rectangle-16-Copy-6" fill="#442F4B" x="121" y="35" width="9" height="4" rx="2"/>
+                <rect id="Rectangle-16-Copy-7" fill="#442F4B" x="113" y="28" width="16" height="4" rx="2"/>
+            </g>
+        </g>
+    </g>
+</svg>

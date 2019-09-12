@@ -1,0 +1,252 @@
+{% extends 'layout.html' %}
+{% load static i18n %}
+{% block title %}{% trans 'Donate Button' %}{% endblock title %}
+
+{% block extrastyles %}
+{% endblock %}
+
+{% block content %}
+
+<div class="app-content content">
+    <div class="content-wrapper">
+        <div class="content-header row">
+          <div class="content-header-left col-md-8 col-12 mb-2 breadcrumb-new">
+            <h3 class="content-header-title mb-0 d-inline-block">{% trans 'Donate Button' %}</h3>
+            <div class="row breadcrumbs-top d-inline-block">
+              <div class="breadcrumb-wrapper col-12">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="{% url 'pesaify-dashboard' %}">{% trans 'Dashboard' %}</a>
+                  </li>
+                  <li class="breadcrumb-item"><a href="{% url 'pesaify-payments' %}">{% trans 'Payments' %}</a>
+                  </li>
+                  <li class="breadcrumb-item"><a href="{% url 'pesaify-payment-tools' %}">{% trans 'Tools' %}</a>
+                  </li>
+                  <li class="breadcrumb-item active">{% trans 'Button' %}
+                  </li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="content-body">
+            {% if not request.user.dismiss_message and request.user.message %}
+            <div class="alert alert-dismissable alert-success">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true" id="dismiss">&times;</button>
+                {{ request.user.message|safe }}
+            </div>
+            {% endif %}
+            <form class="form-horizontal form-user-profile row" id="button-details" action="#" method="POST">
+                {% csrf_token %}
+                <div class="col-12 col-md-6">
+                    <div class="">
+                        <div class="card-content collapse show">
+                            <p class="text-bold-700 text-uppercase">{% trans ' Create a Checkout Button ' %}</p>
+                            <div class="card-body row">
+                                <div class="col-12 col-md-6">
+                                    <fieldset class="form-label-group">
+                                        <input type="number" name="price"  value="{{ request.user.button.price }}"  step="0.000001" class="form-control" autofocus="" min="0.000001" id="price">
+                                        <label for="price">{% trans 'Default Price' %} *</label>
+                                        <small class="price-error error"></small>
+                                    </fieldset>
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <fieldset class="form-label-group">
+                                        <select class="form-control" id="currency" required name="currency">
+                                            {% for currency in currencies %}
+                                            <option {% if request.user.button.currency == currency.0  %}selected{% endif %} value="{{ currency.0 }}">{{ currency.1 }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <small class="currency-error error"></small>
+                                    </fieldset>
+                                    <small class="currency-error error"></small>
+                                </div>
+                                <div class="col-12">
+                                    <fieldset class="form-label-group">
+                                        <input type="text" name="description"  value="{{ request.user.button.description }}"  class="form-control" autofocus="" id="description">
+                                        <label for="description">{% trans ' Checkout Description (optional)' %}</label>
+                                        <small class="description-error error"></small>
+                                    </fieldset>
+                                </div>
+                                <div class="col-12">
+                                    <fieldset class="form-label-group">
+                                        <input type="hidden" name="width"  value="{{ request.user.button.width }}"  class="form-control" autofocus="" id="width">
+                                        <input type="hidden" name="height"  value="{{ request.user.button.height }}"  class="form-control" autofocus="" id="height">
+                                        <a href="#" id="small" data-width="146" data-height="57" class="btn btn-sm {% if request.user.button.width < 168 %}btn-info{% else %}btn-outline-info{% endif %} m-2 ">146 x 57 px </a>
+                                        <a href="#" id="medium" data-width="168" data-height="65" class="btn btn-md {% if request.user.button.width >= 168 and request.user.button.width < 210 %}btn-info{% else %}btn-outline-info{% endif %} m-2">168 x 65 px </a>
+                                        <a href="#" id="large" data-width="210" data-height="82" class="btn btn-lg {% if request.user.button.width >= 210 %}btn-info{% else %}btn-outline-info{% endif %} m-2">210 x 82 px </a>
+                                        <label for="description">{% trans ' Button Size ' %}</label>
+                                    </fieldset>
+                                </div>
+
+                            </div>
+                            <hr>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="">
+                        <div class="card-content collapse show">
+                            <div class="card-body">
+                                <p class="mt-2">{% trans " This button is used to complete a sale on your website. " %}</p>
+                                <p class="mt-2">{% trans " The merchant manages the shopping cart and collects the buyers' names and addresses if necessary. " %}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="">
+                        <div class="card-content collapse show">
+                            <p class="text-bold-700 text-uppercase">{% trans '  Payment Notifications  ' %}</p>
+                            <div class="card-body row">
+                                <div class="col-12">
+                                    <fieldset class="form-label-group">
+                                        <input type="text" name="ipn"  value="{{ request.user.button.ipn }}" class="form-control" autofocus="" id="ipn">
+                                        <label for="ipn">{% trans ' Server IPN (optional)' %}</label>
+                                        <small class="ipn-error error"></small>
+                                    </fieldset>
+                                </div>
+                                <div class="col-12">
+                                    <fieldset class="form-label-group">
+                                        <input type="text" name="redirect"  value="{{ request.user.button.redirect }}" class="form-control" autofocus="" id="redirect">
+                                        <label for="redirect">{% trans ' Browser Redirect (optional)' %}</label>
+                                        <small class="redirect-error error"></small>
+                                    </fieldset>
+                                </div>
+                                <div class="col-12">
+                                    <fieldset class="form-label-group">
+                                        <input type="email" name="email"  value="{{ request.user.button.email }}" class="form-control" autofocus="" id="email">
+                                        <label for="email">{% trans ' Send Email Notifications To (optional)' %}</label>
+                                        <small class="email-error error"></small>
+                                    </fieldset>
+                                </div>
+
+                            </div>
+                            <hr>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="">
+                        <div class="card-content collapse show">
+                            <div class="card-body">
+                                <p class="mt-2">{% trans " When the transaction is completed, the seller will receive an email order confirmation, and a secure server POST. The buyer will be given a browser-redirect URL to click to return to your website. " %}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="">
+                        <div class="card-content collapse show">
+                            <p class="text-bold-700 text-uppercase">{% trans ' Generated Code ' %}</p>
+                            <p class="mt-2">{% trans " Select all of the HTML code below, then copy and paste it into your web page. " %}</p>
+                            <div class="card-body row">
+                                <div class="col-12">
+                                    <div class="bd-clipboard"><a class="btn btn-sm btn-outline-success btn-clipboard" title="" data-original-title="Copy to clipboard" data-clipboard-target="#button-escape">Copy</a></div>
+
+                                    <div class="highlight">
+                                        <pre>
+                                            <code class="language-html m-2" data-lang="html" id="button-escape">
+                                                {{ request.user.button.escape }}
+                                            </code>
+                                        </pre>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <hr>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="">
+                        <div class="card-content collapse show">
+                            <div class="card-body">
+                                <p class="mt-2">{% trans "Preview" %}</p>
+                                <p id="button-render">{{ request.user.button.render }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+      </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block scripts %}
+    {{ block.super }}
+    <script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+{% endblock %}
+
+{% block onbodyload %}
+    {{ block.super }}
+    new ClipboardJS('.btn-clipboard');
+    $('.btn-clipboard').tooltip({title: "Copied!", trigger: "click"});
+    $('#small, #medium, #large').on('click', function(e){
+        e.preventDefault();
+        $('.btn-info').removeClass('btn-info').addClass('btn-outline-info');
+        $(this).removeClass('btn-outline-info').addClass('btn-info');
+        $('#width').attr('value', $(this).attr('data-width')).trigger('change');
+        $('#height').attr('value', $(this).attr('data-height')).trigger('change');
+    });
+    $('#button-details').validate({
+        url: "{% url 'button-detail' request.user.button.id %}",
+        type: "PATCH",
+        event: 'change',
+        beforeSend: function(jqXHR, setting) {
+            $(".error").html("");
+        },
+        success: function(data, textStatus, jqXHR) {
+            $('#button-render').html(jqXHR.responseJSON['render']);
+            $('#button-escape').html(jqXHR.responseJSON['escape']);
+            new ClipboardJS('.btn-clipboard');
+            $('.btn-clipboard').tooltip({title: "Copied!", trigger: "click"});
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            if(!textStatus) {
+                $.notify({
+                    icon: "{% if request.user.get_photo %}{{ request.user.get_photo }}{% else %}{% static 'pesaify/avatars/avatar-1.png' %}{% endif %}",
+                    title: 'Failed to update ',
+                    message: 'Error has occured while updating'
+                },{
+                    type: 'minimalist',
+                    delay: 10000,
+                    placement: {
+                        from: "top",
+                        align: "right"
+                    },
+                    animate: {
+                        enter: 'animated fadeInLeftBig',
+                        exit: 'animated fadeOutLeftBig'
+                    },
+                    icon_type: 'image',
+                    template: '<div data-notify="container" class="alert alert-{0} card" role="alert">' +
+                        '<div id="image">' +
+                        '<img data-notify="icon" class="rounded-circle float-left" height="80px">' +
+                        '</div><div id="text">' +
+                        '<span data-notify="title">{1}</span><br>' +
+                        '<span data-notify="message">{2}</span><br>' +
+                        '</div>'+
+                    '</div>'
+                });
+
+                var snd = new  Audio(`data:audio/wav;base64,//uQRAAAAWMSLwUIYAAsYkXgoQwAEaYLWfkWgAI0wWs/ItAAAGDgYtAgAyN+QWaAAihwMWm4G8QQRDiMcCBcH3Cc+CDv/7xA4Tvh9Rz/y8QADBwMWgQAZG/ILNAARQ4GLTcDeIIIhxGOBAuD7hOfBB3/94gcJ3w+o5/5eIAIAAAVwWgQAVQ2ORaIQwEMAJiDg95G4nQL7mQVWI6GwRcfsZAcsKkJvxgxEjzFUgfHoSQ9Qq7KNwqHwuB13MA4a1q/DmBrHgPcmjiGoh//EwC5nGPEmS4RcfkVKOhJf+WOgoxJclFz3kgn//dBA+ya1GhurNn8zb//9NNutNuhz31f////9vt///z+IdAEAAAK4LQIAKobHItEIYCGAExBwe8jcToF9zIKrEdDYIuP2MgOWFSE34wYiR5iqQPj0JIeoVdlG4VD4XA67mAcNa1fhzA1jwHuTRxDUQ//iYBczjHiTJcIuPyKlHQkv/LHQUYkuSi57yQT//uggfZNajQ3Vmz+Zt//+mm3Wm3Q576v////+32///5/EOgAAADVghQAAAAA//uQZAUAB1WI0PZugAAAAAoQwAAAEk3nRd2qAAAAACiDgAAAAAAABCqEEQRLCgwpBGMlJkIz8jKhGvj4k6jzRnqasNKIeoh5gI7BJaC1A1AoNBjJgbyApVS4IDlZgDU5WUAxEKDNmmALHzZp0Fkz1FMTmGFl1FMEyodIavcCAUHDWrKAIA4aa2oCgILEBupZgHvAhEBcZ6joQBxS76AgccrFlczBvKLC0QI2cBoCFvfTDAo7eoOQInqDPBtvrDEZBNYN5xwNwxQRfw8ZQ5wQVLvO8OYU+mHvFLlDh05Mdg7BT6YrRPpCBznMB2r//xKJjyyOh+cImr2/4doscwD6neZjuZR4AgAABYAAAABy1xcdQtxYBYYZdifkUDgzzXaXn98Z0oi9ILU5mBjFANmRwlVJ3/6jYDAmxaiDG3/6xjQQCCKkRb/6kg/wW+kSJ5//rLobkLSiKmqP/0ikJuDaSaSf/6JiLYLEYnW/+kXg1WRVJL/9EmQ1YZIsv/6Qzwy5qk7/+tEU0nkls3/zIUMPKNX/6yZLf+kFgAfgGyLFAUwY//uQZAUABcd5UiNPVXAAAApAAAAAE0VZQKw9ISAAACgAAAAAVQIygIElVrFkBS+Jhi+EAuu+lKAkYUEIsmEAEoMeDmCETMvfSHTGkF5RWH7kz/ESHWPAq/kcCRhqBtMdokPdM7vil7RG98A2sc7zO6ZvTdM7pmOUAZTnJW+NXxqmd41dqJ6mLTXxrPpnV8avaIf5SvL7pndPvPpndJR9Kuu8fePvuiuhorgWjp7Mf/PRjxcFCPDkW31srioCExivv9lcwKEaHsf/7ow2Fl1T/9RkXgEhYElAoCLFtMArxwivDJJ+bR1HTKJdlEoTELCIqgEwVGSQ+hIm0NbK8WXcTEI0UPoa2NbG4y2K00JEWbZavJXkYaqo9CRHS55FcZTjKEk3NKoCYUnSQ0rWxrZbFKbKIhOKPZe1cJKzZSaQrIyULHDZmV5K4xySsDRKWOruanGtjLJXFEmwaIbDLX0hIPBUQPVFVkQkDoUNfSoDgQGKPekoxeGzA4DUvnn4bxzcZrtJyipKfPNy5w+9lnXwgqsiyHNeSVpemw4bWb9psYeq//uQZBoABQt4yMVxYAIAAAkQoAAAHvYpL5m6AAgAACXDAAAAD59jblTirQe9upFsmZbpMudy7Lz1X1DYsxOOSWpfPqNX2WqktK0DMvuGwlbNj44TleLPQ+Gsfb+GOWOKJoIrWb3cIMeeON6lz2umTqMXV8Mj30yWPpjoSa9ujK8SyeJP5y5mOW1D6hvLepeveEAEDo0mgCRClOEgANv3B9a6fikgUSu/DmAMATrGx7nng5p5iimPNZsfQLYB2sDLIkzRKZOHGAaUyDcpFBSLG9MCQALgAIgQs2YunOszLSAyQYPVC2YdGGeHD2dTdJk1pAHGAWDjnkcLKFymS3RQZTInzySoBwMG0QueC3gMsCEYxUqlrcxK6k1LQQcsmyYeQPdC2YfuGPASCBkcVMQQqpVJshui1tkXQJQV0OXGAZMXSOEEBRirXbVRQW7ugq7IM7rPWSZyDlM3IuNEkxzCOJ0ny2ThNkyRai1b6ev//3dzNGzNb//4uAvHT5sURcZCFcuKLhOFs8mLAAEAt4UWAAIABAAAAAB4qbHo0tIjVkUU//uQZAwABfSFz3ZqQAAAAAngwAAAE1HjMp2qAAAAACZDgAAAD5UkTE1UgZEUExqYynN1qZvqIOREEFmBcJQkwdxiFtw0qEOkGYfRDifBui9MQg4QAHAqWtAWHoCxu1Yf4VfWLPIM2mHDFsbQEVGwyqQoQcwnfHeIkNt9YnkiaS1oizycqJrx4KOQjahZxWbcZgztj2c49nKmkId44S71j0c8eV9yDK6uPRzx5X18eDvjvQ6yKo9ZSS6l//8elePK/Lf//IInrOF/FvDoADYAGBMGb7FtErm5MXMlmPAJQVgWta7Zx2go+8xJ0UiCb8LHHdftWyLJE0QIAIsI+UbXu67dZMjmgDGCGl1H+vpF4NSDckSIkk7Vd+sxEhBQMRU8j/12UIRhzSaUdQ+rQU5kGeFxm+hb1oh6pWWmv3uvmReDl0UnvtapVaIzo1jZbf/pD6ElLqSX+rUmOQNpJFa/r+sa4e/pBlAABoAAAAA3CUgShLdGIxsY7AUABPRrgCABdDuQ5GC7DqPQCgbbJUAoRSUj+NIEig0YfyWUho1VBBBA//uQZB4ABZx5zfMakeAAAAmwAAAAF5F3P0w9GtAAACfAAAAAwLhMDmAYWMgVEG1U0FIGCBgXBXAtfMH10000EEEEEECUBYln03TTTdNBDZopopYvrTTdNa325mImNg3TTPV9q3pmY0xoO6bv3r00y+IDGid/9aaaZTGMuj9mpu9Mpio1dXrr5HERTZSmqU36A3CumzN/9Robv/Xx4v9ijkSRSNLQhAWumap82WRSBUqXStV/YcS+XVLnSS+WLDroqArFkMEsAS+eWmrUzrO0oEmE40RlMZ5+ODIkAyKAGUwZ3mVKmcamcJnMW26MRPgUw6j+LkhyHGVGYjSUUKNpuJUQoOIAyDvEyG8S5yfK6dhZc0Tx1KI/gviKL6qvvFs1+bWtaz58uUNnryq6kt5RzOCkPWlVqVX2a/EEBUdU1KrXLf40GoiiFXK///qpoiDXrOgqDR38JB0bw7SoL+ZB9o1RCkQjQ2CBYZKd/+VJxZRRZlqSkKiws0WFxUyCwsKiMy7hUVFhIaCrNQsKkTIsLivwKKigsj8XYlwt/WKi2N4d//uQRCSAAjURNIHpMZBGYiaQPSYyAAABLAAAAAAAACWAAAAApUF/Mg+0aohSIRobBAsMlO//Kk4soosy1JSFRYWaLC4qZBYWFRGZdwqKiwkNBVmoWFSJkWFxX4FFRQWR+LsS4W/rFRb/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////VEFHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAU291bmRib3kuZGUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMjAwNGh0dHA6Ly93d3cuc291bmRib3kuZGUAAAAAAAAAACU=`);
+                snd.play();
+            }
+
+            $.each(jqXHR.responseJSON, function(index,value){
+                if(index == "detail") {
+                    $(".detail-error").html(value)
+                } else {
+                    result = ''
+                    $(value).each(function(index,value){result= result + "<p>"+value+"</p>"});
+                    $("." + index.replace(/_/g, '-') + "-error").html(result)
+                }
+            })
+        },
+    });
+
+{% endblock %}

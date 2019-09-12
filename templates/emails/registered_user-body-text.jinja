@@ -1,0 +1,22 @@
+{% trans url=resolve_url('pesaify-activate-account', activation_token) %}
+Thank you for registering in Pesaify
+
+We hope you enjoy it
+
+We built it to be beautiful, elegant, simple to use and fun - without forsaking flexibility and power.
+
+Please click on the link below to confirm registration for your  Pesaify Account:
+
+{{ url }}
+
+If clicking the link above doesn't work, please copy and paste the URL in a new browser window instead.
+
+If you've received this mail in error, it's likely that another user entered your email address by mistake.
+If you didn't initiate the request, you don't need to take any further action and can safely disregard this email.
+
+--
+The Pesaify Team
+{% endtrans %}
+{% trans url=resolve_url('pesaify-cancel-account', cancel_token) %}
+You may remove your account from this service: {{ url }}
+{% endtrans %}

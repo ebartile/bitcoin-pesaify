@@ -1,0 +1,159 @@
+{% extends 'iframe/layout.html' %}
+{% load static i18n %}
+{% block title %}{% trans 'Email Bill' %}{% endblock title %}
+
+{% block extrastyles %}
+{% endblock %}
+
+{% block content %}
+
+<form class="row" id="email-details" action="#" method="POST">
+{% csrf_token %}
+  <div class="app-content content">
+      <div class="content-wrapper">
+          <div class="content-body row">
+            {% if not request.user.dismiss_message and request.user.message %}
+            <div class="alert alert-dismissable alert-success">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true" id="dismiss">&times;</button>
+                {{ request.user.message|safe }}
+            </div>
+            {% endif %}
+            <div class="col-12">
+              <h1>Bill Info</h1>
+              <p style="margin-top: 5px"> Due Date: {{ bill.due_date }}</p>
+              <p style="margin-top: 5px; margin-bottom: 25px">Item List</p>
+            </div>
+            <div class="col-12">
+                <div id="itemList">
+                  <div class="phone-form well form-horizontal" style="margin-top: 0px">
+                    <table class="table table-condensed" style="width: 100%; margin-bottom: 0px">
+                      <thead>
+                        <tr>
+                          <td style="text-align: left; padding: 4px"><b>Item</b></td>
+                          <td style="text-align: right; padding: 4px"><b>Price</b></td>
+                          <td style="text-align: center; padding: 4px"><b>Quantity</b></td>
+                          <td style="text-align: center; padding: 4px"><b>Amount</b></td>
+                        </tr>
+                      </thead>
+                      <tbody style="font-size: 0.9em">
+
+                        {% for item in bill.billitems %}
+                        <tr>
+                          <td style="text-align: left; padding: 4px"><strong>{{ item.name }}</strong></td>
+                          <td style="text-align: right; padding: 4px">{{ item.price|floatformat:7 }}</td>
+                          <td style="text-align: center; padding: 4px">{{ item.quantity }}</td>
+                          <td style="text-align: center; padding: 4px">{{ item.amount|floatformat:7 }}{{ item.bill.currency }}</td>
+                        </tr>
+                        {% endfor %}
+                        {% if bill.processing_fee %}
+                        <tr>
+                          <td style="text-align: left; padding: 4px"><strong>Merchant Passthrough - BitPay Processing Fee (1%)</strong></td>
+                          <td style="text-align: right; padding: 4px"></td>
+                          <td style="text-align: center; padding: 4px"></td>
+                          <td style="text-align: center; padding: 4px">{{ bill.processing_fee_total|floatformat:7 }}{{ bill.currency }}</td>
+                        </tr>
+                        {% endif %}
+
+                        <tr>
+                          <td style="text-align: left; padding: 4px"><strong>{% trans "Order Total: " %}</strong></td>
+                          <td style="text-align: right; padding: 4px"></td>
+                          <td style="text-align: center; padding: 4px"></td>
+                          <td style="text-align: center; padding: 4px"><strong> {{ bill.amount|floatformat:7 }}{{ bill.currency }}</strong></td>
+                        </tr>
+
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+            </div>
+            {% if bill.info %}
+            <div class="col-12 col-md-6 mt-2 row">
+                <div class="col-12">
+                  <h1>Buyer Information</h1>
+                </div>
+                <div class="col-12">
+                    <fieldset class="form-label-group">
+                        <input type="text" class="form-control" id="name" autofocus="" name="name" value="{{ bill.name }}" required="">
+                        <label for="name">{% trans 'Buyer Name' %}</label>
+                        <small class="name-error error"></small>
+                    </fieldset>
+                </div>
+                <div class="col-12">
+                    <fieldset class="form-label-group">
+                        <input type="text" class="form-control" id="address" autofocus="" name="address1" value="{{ bill.address }}" required="">
+                        <label for="address">{% trans 'Address' %}</label>
+                        <small class="address-error error"></small>
+                    </fieldset>
+                </div>
+                <div class="col-12">
+                    <fieldset class="form-label-group">
+                        <input type="text" class="form-control" id="address" autofocus="" name="address2">
+                        <label for="address">{% trans 'Other Address' %}</label>
+                        <small class="address-error error"></small>
+                    </fieldset>
+                </div>
+                <div class="col-12">
+                    <fieldset class="form-label-group">
+                        <input type="text" class="form-control" id="phone" autofocus="" name="phone">
+                        <label for="phone">{% trans 'Phone' %}</label>
+                        <small class="phone-error error"></small>
+                    </fieldset>
+                </div>
+                <div class="col-12">
+                    <fieldset class="form-label-group">
+                        <input type="text" class="form-control" id="city" autofocus="" name="city" value="{{ bill.city }}" required="">
+                        <label for="city">{% trans 'City' %}</label>
+                        <small class="city-error error"></small>
+                    </fieldset>
+                </div>
+                <div class="col-12">
+                    <fieldset class="form-label-group">
+                        <input type="text" class="form-control" id="region" autofocus="" name="region" value="{{ bill.region }}" required="">
+                        <label for="region">{% trans 'Region' %}</label>
+                        <small class="region-error error"></small>
+                    </fieldset>
+                </div>
+                <div class="col-12">
+                    <fieldset class="form-label-group">
+                        <input type="text" class="form-control" id="post-code" autofocus="" name="post_code" value="{{ bill.post_code }}" required="">
+                        <label for="post-code">{% trans 'Post Code' %}</label>
+                        <small class="post-code-error error"></small>
+                    </fieldset>
+                </div>
+                <div class="col-12">
+                    <fieldset class="form-label-group">
+                        <select class="form-control" id="country" required name="country">
+                            {% for country in countries %}
+                                <option value="{{ country.code }}" {% if bill.country.code == country.code %}selected{% endif %}>{{ country.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <small class="country-error error"></small>
+                    </fieldset>
+                </div>
+                <div class="col-12 text-right mb-4">
+                    <p><small>By providing your information, you give explicit consent to Pesaify to store and provide this information to the merchant. <a href="https://www.pesaify.com/privacy" target="__blank">View Privacy Policy</a> </small></p>
+                </div>
+              </div>
+              {% endif %}
+              <div class="col-12 {% if bill.info %}col-md-6{% endif %} mt-2">
+                <h1>Order Total<br><small><strong> {{ bill.amount|floatformat:7 }}{{ bill.currency }}</strong></small></h1>
+
+                <input type="image" class="pull-right" src="{% static 'pesaify/images/pay.svg' %}" style="width: 168px;height: 65px" alt="Pesaify, the easy way to pay with bitcoins.">
+              </div>
+          </div>
+        </div>
+      </div>
+  </div>
+</form>
+{% endblock %}
+
+
+{% block scripts %}
+    {{ block.super }}
+{% endblock %}
+
+{% block onbodyload %}
+    {{ block.super }}
+
+{% endblock %}

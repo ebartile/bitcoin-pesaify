@@ -1,0 +1,12 @@
+{% extends "emails/base-body-html.jinja" %}
+
+{% block body %}
+    {% trans name=user.business.legal_name, url=resolve_url("pesaify-invoice-email", bill.uuid) %}
+    <p>Bill from {{ name }}</p>
+    <p> You've received a bill from {{ name }}. You can view and pay this bill by following the link below.</p>
+    <a class="button" href="{{ url }}" title="Pay Bill">Pay Bill Now</a>
+    <p>You can ignore this message if you did not request.</p>
+    <p><small>We look forward to serving you</small></p>
+    <p><small>Pesaify Team</small></p>
+    {% endtrans %}
+{% endblock %}

@@ -1,0 +1,16 @@
+{% load i18n %}
+
+{% get_available_languages as langs %}
+<footer class="footer footer-static footer-transparent">
+    <p class="clearfix blue-grey lighten-2 text-sm-center mb-0 px-2">
+        <span class="float-md-left d-block d-md-inline-block">{% trans 'Copyright' %} &copy; {% now "Y" %}
+            <a class="text-bold-800 grey darken-2" href="https://www.pesaify.com/company/" target="_blank">{% trans 'Pesaify Enterprises (SMC Limited)' %} </a>, {% trans 'All rights reserved.' %}
+        </span>
+        <span class="float-md-right d-block d-md-inline-blockd-none d-lg-block">
+            {% for code, lang in langs %}
+                <a href='/{{ code }}/'>{{ lang }}</a> |
+            {% endfor %}
+        </span>
+    </p>
+</footer>
+
